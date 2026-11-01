@@ -81,3 +81,50 @@ body {
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
+
+/* ── Leaflet OpenStreetMap Dark Theme (Zero API Key Required) ──────────── */
+.dark-map-tiles .leaflet-tile {
+  filter: invert(100%) hue-rotate(180deg) brightness(78%) contrast(95%);
+}
+
+.dark-map-tiles.leaflet-container,
+.dark-map-tiles .leaflet-pane {
+  background: #08090a !important;
+}
+
+.leaflet-container .leaflet-control-attribution {
+  background: rgba(15, 16, 17, 0.85) !important;
+  color: #8a8f98 !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace !important;
+  font-size: 9.5px !important;
+  backdrop-filter: blur(6px);
+  border-top-left-radius: 6px;
+  border: 1px solid #23252a;
+}
+
+.leaflet-container .leaflet-control-attribution a {
+  color: #02b8cc !important;
+  text-decoration: none !important;
+}
+
+.leaflet-container .leaflet-control-attribution a:hover {
+  text-decoration: underline !important;
+}
+
+.leaflet-container .leaflet-bar {
+  border: 1px solid #23252a !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+  border-radius: 6px !important;
+  overflow: hidden;
+}
+
+.leaflet-container .leaflet-bar a {
+  background-color: #0f1011 !important;
+  border-bottom: 1px solid #23252a !important;
+  color: #d0d6e0 !important;
+}
+
+.leaflet-container .leaflet-bar a:hover {
+  background-color: #161718 !important;
+  color: #e4f222 !important;
+}

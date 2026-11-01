@@ -203,6 +203,14 @@ export const GeodesicRouteMap: React.FC<GeodesicRouteMapProps> = ({
       const layerGroup = L.layerGroup().addTo(map);
       layerGroupRef.current = layerGroup;
 
+      // Official OpenStreetMap tile layer (100% Free, Zero API Key Required)
+      const osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+      }).addTo(map);
+      tileLayerRef.current = osmLayer;
+
       mapInstanceRef.current = map;
     }
 
@@ -214,32 +222,16 @@ export const GeodesicRouteMap: React.FC<GeodesicRouteMapProps> = ({
     };
   }, []);
 
-  // Handle Tile Layer Switching (Dark OpenStreetMap vs Standard OpenStreetMap)
+  // Handle Theme Switching: Dark Inversion Filter vs Standard OpenStreetMap
   useEffect(() => {
-    const map = mapInstanceRef.current;
-    if (!map) return;
+    const container = mapContainerRef.current;
+    if (!container) return;
 
-    if (tileLayerRef.current) {
-      map.removeLayer(tileLayerRef.current);
+    if (mapTheme === 'dark') {
+      container.classList.add('dark-map-tiles');
+    } else {
+      container.classList.remove('dark-map-tiles');
     }
-
-    const tileUrl =
-      mapTheme === 'dark'
-        ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-        : 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-
-    const attribution =
-      mapTheme === 'dark'
-        ? '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/" target="_blank">CARTO</a>'
-        : '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors';
-
-    const newTileLayer = L.tileLayer(tileUrl, {
-      attribution,
-      maxZoom: 18,
-      subdomains: 'abcd',
-    }).addTo(map);
-
-    tileLayerRef.current = newTileLayer;
   }, [mapTheme]);
 
   // Render Geodesic Flight Path & Markers on Map
@@ -392,12 +384,12 @@ export const GeodesicRouteMap: React.FC<GeodesicRouteMapProps> = ({
 
       {/* Leaflet Real OpenStreetMap Container */}
       <div className="relative w-full h-56 sm:h-72 bg-[#08090a]">
-        <div ref={mapContainerRef} className="w-full h-full z-0 select-none" />
+        <div ref={mapContainerRef} className="w-full h-full z-0 select-none dark-map-tiles" />
 
         {/* Ambient Map Overlay Corner Tags */}
         <div className="pointer-events-none absolute bottom-2 left-2 z-[400] flex items-center gap-1.5 px-2 py-1 rounded-[4px] bg-[#0f1011]/90 backdrop-blur-md border border-[#23252a] text-[10px] font-mono text-[#8a8f98]">
           <Layers className="w-3 h-3 text-[#e4f222]" />
-          <span>Interactive OpenStreetMap Engine</span>
+          <span>Official OpenStreetMap Engine (Free & Unlocked)</span>
         </div>
       </div>
 
