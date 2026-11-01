@@ -224,7 +224,10 @@ export const BatchPredictPage: React.FC = () => {
                   <tr key={idx} className="hover:bg-[rgba(255,255,255,0.02)] transition-colors">
                     <td className="py-2 px-4 font-mono text-[#62666d]">{idx + 1}</td>
                     <td className="py-2 px-4 font-mono text-[#ffffff] font-bold text-[13px]">
-                      {Number(row.predicted_shipping_days || 0).toFixed(2)}d
+                      {Math.ceil(Number(row.predicted_shipping_days || 0))}d
+                      <span className="text-[10px] text-[#62666d] block font-normal">
+                        (~{Number(row.predicted_shipping_days || 0).toFixed(1)}d)
+                      </span>
                     </td>
                     <td className="py-2 px-4">
                       <Badge variant="neutral" size="sm">

@@ -339,7 +339,10 @@ export const DashboardPage: React.FC = () => {
                     <td className="py-2.5 px-4 text-[#8a8f98]">{row.category_name}</td>
                     <td className="py-2.5 px-4 font-mono text-[#8a8f98]">{row.scheduled_days}d</td>
                     <td className="py-2.5 px-4 font-mono text-[#ffffff] font-medium">
-                      {row.predicted_days.toFixed(1)}d
+                      {Math.ceil(row.predicted_days)}d
+                      <span className="text-[10px] text-[#62666d] block">
+                        (~{row.predicted_days.toFixed(1)}d)
+                      </span>
                     </td>
                     <td className="py-2.5 px-4">
                       <Badge variant={row.is_delayed_risk ? 'red' : 'green'} size="sm">

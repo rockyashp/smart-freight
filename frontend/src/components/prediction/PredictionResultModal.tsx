@@ -28,7 +28,9 @@ export const PredictionResultModal: React.FC<PredictionResultModalProps> = ({
   if (!result) return null;
 
   const isDelayed = result.is_delayed_risk;
-  const diff = result.difference_days;
+  const roundedDays = result.predicted_shipping_days_rounded || Math.ceil(result.predicted_shipping_days);
+  const roundedScheduled = Math.round(result.scheduled_shipping_days);
+  const diffRounded = roundedDays - roundedScheduled;
 
   return (
     <Modal
@@ -66,10 +68,17 @@ export const PredictionResultModal: React.FC<PredictionResultModalProps> = ({
                   {isDelayed ? 'Potential Delay Risk' : 'On-Time Expected'}
                 </Badge>
               </div>
-              <h2 className="text-[28px] font-[510] font-mono tracking-tight text-[#ffffff] mt-0.5 flex items-baseline gap-1.5">
-                <CountUp value={result.predicted_shipping_days} decimals={1} duration={900} />
-                <span className="text-[14px] font-normal text-[#8a8f98]">transit days</span>
-              </h2>
+              <div className="flex items-baseline gap-2 mt-0.5">
+                <h2 className="text-[32px] font-[510] font-mono tracking-tight text-[#ffffff] flex items-baseline gap-1.5">
+                  <CountUp value={roundedDays} decimals={0} duration={800} />
+                  <span className="text-[18px] font-medium text-[#e4f222]">
+                    {roundedDays === 1 ? 'Day' : 'Days'}
+                  </span>
+                </h2>
+                <span className="text-[12px] font-mono text-[#8a8f98]">
+                  (~{result.predicted_shipping_days.toFixed(1)}d transit)
+                </span>
+              </div>
             </div>
           </div>
 
@@ -77,13 +86,17 @@ export const PredictionResultModal: React.FC<PredictionResultModalProps> = ({
             <span className="text-[11px] text-[#8a8f98] font-mono block">Variance from Schedule:</span>
             <span
               className={`text-[15px] font-mono font-medium ${
-                diff > 0.3 ? 'text-[#eb5757]' : diff < -0.3 ? 'text-[#27a644]' : 'text-[#8a8f98]'
+                diffRounded > 0 ? 'text-[#eb5757]' : diffRounded < 0 ? 'text-[#27a644]' : 'text-[#8a8f98]'
               }`}
             >
-              {diff > 0 ? `+${diff.toFixed(1)} days late` : `${Math.abs(diff).toFixed(1)} days early`}
+              {diffRounded > 0
+                ? `+${diffRounded} ${diffRounded === 1 ? 'day' : 'days'} late`
+                : diffRounded < 0
+                ? `${Math.abs(diffRounded)} ${Math.abs(diffRounded) === 1 ? 'day' : 'days'} early`
+                : 'On Schedule'}
             </span>
             <span className="text-[11px] text-[#62666d] block font-mono">
-              Scheduled: {result.scheduled_shipping_days} days
+              Scheduled: {roundedScheduled} {roundedScheduled === 1 ? 'day' : 'days'}
             </span>
           </div>
         </div>

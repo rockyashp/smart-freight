@@ -8,6 +8,7 @@ Smart Freight Regression Training & Evaluation Module
 import os
 import json
 import time
+import math
 import joblib
 import numpy as np
 import pandas as pd
@@ -276,11 +277,13 @@ def predict_single(input_data: dict) -> dict:
 
     pred_days = float(pipeline.predict(df_single)[0])
     scheduled_days = float(row.get("Days for shipment (scheduled)", 4))
+    rounded_days = int(math.ceil(pred_days))
     diff = pred_days - scheduled_days
     speed_info = classify_shipping_speed(pred_days)
 
     return {
         "predicted_shipping_days": round(pred_days, 2),
+        "predicted_shipping_days_rounded": rounded_days,
         "scheduled_shipping_days": round(scheduled_days, 2),
         "difference_days": round(diff, 2),
         "is_delayed_risk": bool(diff > 0.3),
@@ -353,6 +356,7 @@ def predict_batch(df_input: pd.DataFrame) -> pd.DataFrame:
     preds = pipeline.predict(df_features)
     df_result = df_input.copy()
     df_result["predicted_shipping_days"] = np.round(preds, 2)
+    df_result["predicted_shipping_days_rounded"] = np.ceil(preds).astype(int)
     df_result["shipping_speed_category"] = [
         classify_shipping_speed(p)["category"] for p in preds
     ]

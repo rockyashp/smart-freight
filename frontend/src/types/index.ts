@@ -37,6 +37,7 @@ export interface PredictionInput {
 
 export interface PredictionResult {
   predicted_shipping_days: number;
+  predicted_shipping_days_rounded?: number;
   scheduled_shipping_days: number;
   difference_days: number;
   is_delayed_risk: boolean;

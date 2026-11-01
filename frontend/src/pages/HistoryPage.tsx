@@ -159,7 +159,10 @@ export const HistoryPage: React.FC = () => {
                     </td>
                     <td className="py-2.5 px-4 font-mono text-[#8a8f98]">{row.scheduled_days}d</td>
                     <td className="py-2.5 px-4 font-mono text-[#ffffff] font-bold text-[13px]">
-                      {Number(row.predicted_days || 0).toFixed(1)}d
+                      {Math.ceil(Number(row.predicted_days || 0))}d
+                      <span className="text-[10px] text-[#62666d] block font-normal">
+                        (~{Number(row.predicted_days || 0).toFixed(1)}d)
+                      </span>
                     </td>
                     <td className="py-2.5 px-4">
                       <Badge variant={row.is_delayed_risk ? 'red' : 'green'} size="sm">
