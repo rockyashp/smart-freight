@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import L from 'leaflet';
 import { Badge } from '../ui/Badge';
-import { Compass, Globe2, Layers, MapPin } from 'lucide-react';
+import { Compass, Globe2, MapPin } from 'lucide-react';
 
 export interface GeodesicRouteMapProps {
   origin?: {
@@ -333,7 +333,7 @@ export const GeodesicRouteMap: React.FC<GeodesicRouteMapProps> = ({
         <div className="flex items-center gap-2">
           <Globe2 className="w-3.5 h-3.5 text-[#02b8cc]" />
           <span className="text-[#ffffff] font-medium tracking-wide">
-            OPENSTREETMAP GEODESIC CORRIDOR
+            GLOBAL TRANSIT CORRIDOR
           </span>
           <span className="text-[#62666d]">|</span>
           <span className="text-[#8a8f98]">
@@ -352,7 +352,7 @@ export const GeodesicRouteMap: React.FC<GeodesicRouteMapProps> = ({
             {timeDiffHours >= 0 ? `+${timeDiffHours}h` : `${timeDiffHours}h`} Shift
           </span>
 
-          {/* Map Layer Switcher: Dark OSM vs Standard OSM */}
+          {/* Map Layer Switcher: Dark vs Standard */}
           <div className="flex items-center ml-1 rounded-[5px] bg-[#161718] border border-[#23252a] p-0.5">
             <button
               type="button"
@@ -362,9 +362,9 @@ export const GeodesicRouteMap: React.FC<GeodesicRouteMapProps> = ({
                   ? 'bg-[#e4f222] text-[#08090a]'
                   : 'text-[#8a8f98] hover:text-[#ffffff]'
               }`}
-              title="Dark OpenStreetMap tiles"
+              title="Dark theme map"
             >
-              Dark OSM
+              Dark Map
             </button>
             <button
               type="button"
@@ -374,9 +374,9 @@ export const GeodesicRouteMap: React.FC<GeodesicRouteMapProps> = ({
                   ? 'bg-[#e4f222] text-[#08090a]'
                   : 'text-[#8a8f98] hover:text-[#ffffff]'
               }`}
-              title="Standard OpenStreetMap tiles"
+              title="Standard daylight map"
             >
-              Standard OSM
+              Standard Map
             </button>
           </div>
         </div>
@@ -385,12 +385,6 @@ export const GeodesicRouteMap: React.FC<GeodesicRouteMapProps> = ({
       {/* Leaflet Real OpenStreetMap Container */}
       <div className="relative w-full h-56 sm:h-72 bg-[#08090a]">
         <div ref={mapContainerRef} className="w-full h-full z-0 select-none dark-map-tiles" />
-
-        {/* Ambient Map Overlay Corner Tags */}
-        <div className="pointer-events-none absolute bottom-2 left-2 z-[400] flex items-center gap-1.5 px-2 py-1 rounded-[4px] bg-[#0f1011]/90 backdrop-blur-md border border-[#23252a] text-[10px] font-mono text-[#8a8f98]">
-          <Layers className="w-3 h-3 text-[#e4f222]" />
-          <span>Official OpenStreetMap Engine (Free & Unlocked)</span>
-        </div>
       </div>
 
       {/* Bottom Telemetry Metrics Strip */}
@@ -411,7 +405,7 @@ export const GeodesicRouteMap: React.FC<GeodesicRouteMapProps> = ({
         </div>
         <div className="col-span-2 sm:col-span-1 flex items-center sm:justify-end gap-2">
           <Badge variant="lime" size="sm">
-            Live Great-Circle Geodesic
+            Optimal Transit Route
           </Badge>
         </div>
       </div>

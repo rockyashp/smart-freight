@@ -354,7 +354,7 @@ export const PredictionForm: React.FC<PredictionFormProps> = ({ onSuccess }) => 
               1. Fulfillment & Delivery Schedule
             </h3>
           </div>
-          <Badge variant="lime" size="sm">Primary Regression Feature</Badge>
+          <Badge variant="lime" size="sm">Carrier & Speed</Badge>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -394,10 +394,10 @@ export const PredictionForm: React.FC<PredictionFormProps> = ({ onSuccess }) => 
           <div className="flex items-center gap-2">
             <MapPin className="w-4 h-4 text-[#02b8cc]" />
             <h3 className="text-[14px] font-[510] text-[#ffffff] tracking-tight">
-              2. Geographic Destination (Cascading Hierarchy)
+              2. Delivery Destination
             </h3>
           </div>
-          <Badge variant="teal" size="sm">Strict Pre-Shipment Audit</Badge>
+          <Badge variant="teal" size="sm">Global Routing</Badge>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -443,7 +443,7 @@ export const PredictionForm: React.FC<PredictionFormProps> = ({ onSuccess }) => 
               3. Order Attributes & Merchandise
             </h3>
           </div>
-          <Badge variant="violet" size="sm">Zero Post-Fulfillment Leakage</Badge>
+          <Badge variant="violet" size="sm">Commercial Profile</Badge>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
@@ -527,7 +527,7 @@ export const PredictionForm: React.FC<PredictionFormProps> = ({ onSuccess }) => 
       {/* Submission CTA */}
       <div className="flex items-center justify-between pt-2">
         <p className="text-[12px] text-[#62666d]">
-          Empirically evaluated against production regression pipeline (RMSE ~0.97d).
+          Instant delivery window calculation based on carrier routing history.
         </p>
 
         <Button
@@ -537,7 +537,7 @@ export const PredictionForm: React.FC<PredictionFormProps> = ({ onSuccess }) => 
           loading={submitting || loadingHierarchy}
           icon={<Sparkles className="w-4 h-4" />}
         >
-          {submitting ? 'Running Inference...' : 'Generate Shipping Forecast'}
+          {submitting ? 'Calculating Delivery Time...' : 'Calculate Delivery Time'}
         </Button>
       </div>
     </form>

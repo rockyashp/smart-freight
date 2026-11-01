@@ -30,7 +30,7 @@ export const HistoryPage: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <LoadingState message="Fetching prediction logs from SQLite history database..." />;
+    return <LoadingState message="Loading shipment history records..." />;
   }
 
   const filteredHistory = history.filter((item) => {
@@ -53,7 +53,7 @@ export const HistoryPage: React.FC = () => {
     <div className="space-y-6">
       <PageHeader
         title="Prediction History & Audit Log"
-        subtitle="Immutable log of all model inference calculations recorded in SQLite"
+        subtitle="Complete log of forecasted shipments and delivery risk assessments"
         badge={
           <Badge variant="neutral" size="sm">
             {history.length} Logged Records

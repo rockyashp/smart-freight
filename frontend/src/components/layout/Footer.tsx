@@ -39,22 +39,22 @@ export const Footer: React.FC = () => {
         <div className="flex items-center gap-4 flex-wrap justify-center text-[#8a8f98]">
           <span className="flex items-center gap-1">
             <ShieldCheck className="w-3.5 h-3.5 text-[#27a644]" />
-            Zero-Leakage Boundary Enforced
+            Pre-Dispatch Verification
           </span>
           <span>•</span>
           <span className="flex items-center gap-1">
             <Cpu className="w-3.5 h-3.5 text-[#38bdf8]" />
-            Pre-Shipment Features Only
+            Real-Time Transit Analytics
           </span>
           <span>•</span>
           <span className="flex items-center gap-1">
             <Database className="w-3.5 h-3.5 text-[#a78bfa]" />
-            SQLite Dimensional Star Schema
+            Enterprise Logistics Cloud
           </span>
         </div>
 
         <div>
-          <span>DataCo Supply Chain Analytics © {new Date().getFullYear()}</span>
+          <span>Smart Freight Logistics Platform © {new Date().getFullYear()}</span>
         </div>
       </div>
     </footer>

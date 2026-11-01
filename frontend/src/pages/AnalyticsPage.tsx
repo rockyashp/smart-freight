@@ -35,13 +35,13 @@ export const AnalyticsPage: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <LoadingState message="Computing multi-model benchmark matrix & feature importances..." />;
+    return <LoadingState message="Loading transit accuracy benchmarks..." />;
   }
 
   if (error || !suite) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Regression Analytics" subtitle="Empirical benchmark evaluation" />
+        <PageHeader title="Regression Analytics" subtitle="Transit forecasting performance benchmarks" />
         <EmptyState
           title="Benchmark Suite Unavailable"
           description={error || 'Could not load benchmark cache.'}
@@ -73,10 +73,10 @@ export const AnalyticsPage: React.FC = () => {
     <div className="space-y-6">
       <PageHeader
         title="Predictive Analytics & Model Benchmarks"
-        subtitle="Empirical comparison across regression architectures evaluated on held-out test data"
+        subtitle="Performance evaluation and accuracy benchmarks across shipping forecast models"
         badge={
           <Badge variant="lime" size="sm" dot>
-            {benchmarkTable.length} Architectures Evaluated
+            {benchmarkTable.length} Models Benchmarked
           </Badge>
         }
       />
@@ -89,8 +89,8 @@ export const AnalyticsPage: React.FC = () => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[12px] text-[#8a8f98] font-mono">Authoritative Production Pipeline:</span>
-              <Badge variant="lime" size="sm">Top 1 Empirical Rank</Badge>
+              <span className="text-[12px] text-[#8a8f98] font-mono">Primary Forecasting Engine:</span>
+              <Badge variant="lime" size="sm">Highest Accuracy</Badge>
             </div>
             <h2 className="text-[20px] font-[510] text-[#ffffff] tracking-tight mt-0.5">
               {bestModel.display_name || 'Random Forest Regressor'}
