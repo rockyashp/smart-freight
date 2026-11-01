@@ -1,7 +1,7 @@
 """
 Smart Freight Regression Training & Evaluation Module
 - Strict data-leakage prevention
-- Selects production model by: lowest RMSE → lowest MAE → highest R²
+- Selects production model by: lowest RMSE -> lowest MAE -> highest R^2
 - Writes authoritative model_metadata.json read by every UI component
 """
 
@@ -51,7 +51,7 @@ def _build_preprocessor(numeric_features, categorical_features):
 def train_and_benchmark_models(save_best: bool = True) -> dict:
     os.makedirs(MODEL_DIR, exist_ok=True)
 
-    print("Loading cleaned dataset …")
+    print("Loading cleaned dataset ...")
     df = load_data()
 
     X = df[FEATURE_COLUMNS].copy()
@@ -92,7 +92,7 @@ def train_and_benchmark_models(save_best: bool = True) -> dict:
     preprocessor = _build_preprocessor(numeric_features, categorical_features)
 
     for name, regressor in candidates.items():
-        print(f"\n[Training] {name} …")
+        print(f"\n[Training] {name} ...")
         pipeline = Pipeline(
             steps=[("preprocessor", preprocessor), ("regressor", regressor)]
         )
@@ -116,17 +116,17 @@ def train_and_benchmark_models(save_best: bool = True) -> dict:
         }
         trained_pipelines[name] = pipeline
         print(
-            f"  MAE={mae}  MSE={mse}  RMSE={rmse}  R²={r2}  Time={train_time}s"
+            f"  MAE={mae}  MSE={mse}  RMSE={rmse}  R^2={r2}  Time={train_time}s"
         )
 
-    # ── Model selection: lowest RMSE → lowest MAE → highest R² ──────────────
+    # ── Model selection: lowest RMSE -> lowest MAE -> highest R^2 ──────────────
     sorted_models = sorted(
         results.values(),
         key=lambda m: (m["rmse"], m["mae"], -m["r2"]),
     )
     best = sorted_models[0]
     best_name = best["name"]
-    print(f"\n✓ Selected production model: {best_name} (RMSE={best['rmse']})")
+    print(f"\n[OK] Selected production model: {best_name} (RMSE={best['rmse']})")
 
     # Feature importances for tree models
     best_pipeline = trained_pipelines[best_name]
@@ -175,8 +175,8 @@ def train_and_benchmark_models(save_best: bool = True) -> dict:
         joblib.dump(best_pipeline, PRODUCTION_MODEL_PATH)
         with open(METADATA_PATH, "w") as f:
             json.dump(metadata, f, indent=2)
-        print(f"Model saved → {PRODUCTION_MODEL_PATH}")
-        print(f"Metadata  → {METADATA_PATH}")
+        print(f"Model saved -> {PRODUCTION_MODEL_PATH}")
+        print(f"Metadata  -> {METADATA_PATH}")
 
     return metadata
 

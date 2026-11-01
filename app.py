@@ -12,7 +12,7 @@ import sqlite3
 
 from flask import (
     Flask, render_template, request, redirect, url_for,
-    flash, session, jsonify, Response,
+    flash, session, jsonify, Response, send_from_directory,
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -33,6 +33,32 @@ import college_labs
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "smart_freight_secret_2026_v2")
+
+# ── Native CORS Support ───────────────────────────────────────────────────────
+@app.after_request
+def add_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization'
+    response.headers['Access-Control-Allow-Methods'] = 'GET,POST,PUT,DELETE,OPTIONS'
+    return response
+
+@app.before_request
+def handle_preflight():
+    if request.method == "OPTIONS":
+        res = Response()
+        res.headers['Access-Control-Allow-Origin'] = '*'
+        res.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization'
+        res.headers['Access-Control-Allow-Methods'] = 'GET,POST,PUT,DELETE,OPTIONS'
+        return res
+
+FRONTEND_DIST = os.path.join(os.path.dirname(__file__), "frontend", "dist")
+
+@app.route("/assets/<path:path>")
+def serve_react_assets(path):
+    assets_dir = os.path.join(FRONTEND_DIST, "assets")
+    if os.path.exists(os.path.join(assets_dir, path)):
+        return send_from_directory(assets_dir, path)
+    return send_from_directory(os.path.join(os.path.dirname(__file__), "static"), path)
 
 # Initialise SQLite on startup
 db_manager.init_db()
@@ -175,6 +201,8 @@ def api_categories_for_department():
 
 @app.route("/")
 def index():
+    if not request.args.get("legacy") and os.path.exists(os.path.join(FRONTEND_DIST, "index.html")):
+        return send_from_directory(FRONTEND_DIST, "index.html")
     overview = data_pipeline.get_dataset_overview()
     metadata = train_model.get_metadata()
     return render_template("index.html", overview=overview, metadata=metadata)
@@ -320,6 +348,61 @@ def dashboard():
     return render_template(
         "dashboard.html", kpis=kpis, history=history, metadata=metadata
     )
+
+
+@app.route("/api/dashboard")
+def api_dashboard():
+    kpis = db_manager.get_prediction_kpis()
+    history = db_manager.get_recent_predictions(limit=50)
+    metadata = train_model.get_metadata()
+    return jsonify({
+        "kpis": kpis,
+        "history": history,
+        "metadata": metadata
+    })
+
+
+@app.route("/api/history")
+def api_history():
+    limit = request.args.get("limit", default=100, type=int)
+    history = db_manager.get_recent_predictions(limit=limit)
+    return jsonify({"history": history, "total": len(history)})
+
+
+@app.route("/api/batch_predict", methods=["POST"])
+def api_batch_predict():
+    global _last_batch_df
+    file = request.files.get("batch_file") or request.files.get("file")
+    if not file or not file.filename:
+        return jsonify({"error": "No CSV file uploaded. Please upload a valid CSV file."}), 400
+    try:
+        df_upload = pd.read_csv(file)
+        df_enriched = train_model.predict_batch(df_upload)
+        _last_batch_df = df_enriched
+        batch_total = len(df_enriched)
+        batch_results = df_enriched.head(50).to_dict(orient="records")
+
+        user_id = session.get("user_id")
+        for _, row in df_enriched.head(20).iterrows():
+            r_dict = row.to_dict()
+            res = {
+                "predicted_shipping_days": r_dict.get("predicted_shipping_days", 3.0),
+                "speed_category": r_dict.get("shipping_speed_category", "Standard Duration"),
+                "is_delayed_risk": bool(
+                    r_dict.get("predicted_shipping_days", 3.0)
+                    > float(r_dict.get("Days for shipment (scheduled)", 4) or 4)
+                ),
+            }
+            db_manager.save_prediction(r_dict, res, user_id=user_id, source="batch")
+
+        return jsonify({
+            "success": True,
+            "total": batch_total,
+            "preview": batch_results,
+            "columns": list(df_enriched.columns)
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/dashboard/export_csv")
@@ -1119,6 +1202,22 @@ def api_predict():
         return jsonify(result)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+# ── React SPA Catch-All Route ────────────────────────────────────────────────
+@app.route("/<path:path>")
+def react_catch_all(path):
+    # Exclude API and health routes from fallback
+    if path.startswith("api/") or path.startswith("health"):
+        return jsonify({"error": f"API endpoint /{path} not found"}), 404
+    # Check if exact asset/file exists in frontend/dist
+    target_file = os.path.join(FRONTEND_DIST, path)
+    if os.path.exists(target_file) and os.path.isfile(target_file):
+        return send_from_directory(FRONTEND_DIST, path)
+    # Serve React SPA index.html for client-side routing
+    if os.path.exists(os.path.join(FRONTEND_DIST, "index.html")):
+        return send_from_directory(FRONTEND_DIST, "index.html")
+    return jsonify({"error": f"Path /{path} not found"}), 404
 
 
 if __name__ == "__main__":

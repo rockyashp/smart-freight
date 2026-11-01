@@ -36,7 +36,7 @@
     "mse": 0.9457,
     "rmse": 0.9725,
     "r2": 0.64,
-    "train_time_sec": 63.9
+    "train_time_sec": 79.77
   },
   "model_comparison": [
     {
@@ -45,7 +45,7 @@
       "mse": 0.9457,
       "rmse": 0.9725,
       "r2": 0.64,
-      "train_time_sec": 63.9
+      "train_time_sec": 79.77
     },
     {
       "name": "Tuned Random Forest Regressor",
@@ -53,7 +53,7 @@
       "mse": 1.4478,
       "rmse": 1.2032,
       "r2": 0.4489,
-      "train_time_sec": 7.92
+      "train_time_sec": 7.65
     },
     {
       "name": "Decision Tree Regressor",
@@ -61,7 +61,7 @@
       "mse": 1.5083,
       "rmse": 1.2281,
       "r2": 0.4259,
-      "train_time_sec": 0.83
+      "train_time_sec": 0.87
     },
     {
       "name": "Linear Regression",
@@ -69,7 +69,7 @@
       "mse": 1.5272,
       "rmse": 1.2358,
       "r2": 0.4187,
-      "train_time_sec": 0.78
+      "train_time_sec": 0.81
     }
   ],
   "top_feature_importances": [
@@ -154,5 +154,5 @@
       "importance": 0.003014
     }
   ],
-  "evaluated_at": "2026-10-12 19:22:14"
+  "evaluated_at": "2026-11-01 14:21:47"
 }

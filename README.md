@@ -168,14 +168,18 @@ smart-freight/
 │   └── js/main.js
 │
 ├── data/                       # JSON cache files
-├── models/                     # Saved model metadata & benchmarks
-├── backend/                    # App config & DB models
+├── models/                     # Saved model metadata, benchmarks & pipeline
+├── notebooks/                  # Training & benchmark notebooks
+│   ├── Smart_Freight_Model_Training_Colab.ipynb  # Multi-model Colab training & bundle export
+│   └── 6-Regression Smart_Fright (2).ipynb       # Exploratory analysis notebook
 │
-└── # Documentation
-    ├── README.md
-    ├── TEAMMATE_PROJECT_GUIDE.md
-    ├── Project_Documentation.md
-    └── Presentation_Slides.md
+├── docs/                       # Project documentation, lab reports & slides
+│   ├── Presentation_Slides.md
+│   ├── Project_Documentation.md
+│   ├── TEAMMATE_PROJECT_GUIDE.md
+│   └── 24101A0068_dwm lab3 .pdf
+│
+└── backend/                    # App config & DB models
 ```
 
 ---
@@ -218,18 +222,42 @@ DataCo_Cleaned-2.csv   (in the project root)
 
 ### 5. Train the model & initialize the warehouse
 
+#### Option A: Local Training
 ```bash
 python train_model.py
 python warehouse_etl.py
 ```
 
+#### Option B: Cloud Training via Google Colab (Zero Local Compute)
+1. Open `notebooks/Smart_Freight_Model_Training_Colab.ipynb` in [Google Colab](https://colab.research.google.com).
+2. Upload `DataCo_Cleaned-2.csv` when prompted and execute all cells.
+3. The notebook benchmarks 8 regression models, plots all comparison figures, and automatically downloads `smart_freight_model_bundle.zip`.
+4. Extract the contents directly into your project's `models/` folder.
+5. Initialize the SQLite warehouse locally:
+   ```bash
+   python warehouse_etl.py
+   ```
+
 ### 6. Run the application
 
+#### Mode 1: Production (Unified Flask + React)
+The built React.js frontend (`frontend/dist`) is directly served by Flask:
 ```bash
 python app.py
 ```
-
 Open your browser at: **[http://127.0.0.1:5001](http://127.0.0.1:5001)**
+
+#### Mode 2: Development (Vite Hot-Reload + Flask API)
+Terminal 1 (Backend API):
+```bash
+python app.py
+```
+Terminal 2 (React Vite Dev Server):
+```bash
+cd frontend
+npm run dev
+```
+Open your browser at: **[http://localhost:3000](http://localhost:3000)** (API calls are automatically proxied to Flask).
 
 ---
 
