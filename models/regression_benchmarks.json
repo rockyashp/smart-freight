@@ -1,123 +1,159 @@
 {
   "models": {
-    "Linear Regression": {
-      "name": "Linear Regression",
-      "mae": 0.9701,
-      "mse": 1.5272,
-      "rmse": 1.2358,
-      "r2": 0.4187,
-      "train_time_sec": 0.91
-    },
-    "Decision Tree Regressor": {
-      "name": "Decision Tree Regressor",
-      "mae": 0.9061,
-      "mse": 1.5083,
-      "rmse": 1.2281,
-      "r2": 0.4259,
-      "train_time_sec": 1.6
-    },
     "Random Forest Regressor": {
       "name": "Random Forest Regressor",
       "mae": 0.6938,
-      "mse": 0.9457,
-      "rmse": 0.9725,
-      "r2": 0.64,
-      "train_time_sec": 63.8
+      "mse": 0.9438,
+      "rmse": 0.9715,
+      "r2": 0.6408,
+      "train_time_sec": 486.92,
+      "rank": 1
     },
     "Tuned Random Forest Regressor": {
       "name": "Tuned Random Forest Regressor",
-      "mae": 0.8939,
-      "mse": 1.4478,
-      "rmse": 1.2032,
-      "r2": 0.4489,
-      "train_time_sec": 7.4
+      "mae": 0.8935,
+      "mse": 1.4465,
+      "rmse": 1.2027,
+      "r2": 0.4494,
+      "train_time_sec": 244.37,
+      "rank": 2
+    },
+    "XGBoost Regressor": {
+      "name": "XGBoost Regressor",
+      "mae": 0.905,
+      "mse": 1.4627,
+      "rmse": 1.2094,
+      "r2": 0.4433,
+      "train_time_sec": 6.95,
+      "rank": 3
+    },
+    "Decision Tree Regressor": {
+      "name": "Decision Tree Regressor",
+      "mae": 0.906,
+      "mse": 1.5074,
+      "rmse": 1.2278,
+      "r2": 0.4263,
+      "train_time_sec": 7.3,
+      "rank": 4
+    },
+    "Ridge Regression (L2)": {
+      "name": "Ridge Regression (L2)",
+      "mae": 0.9692,
+      "mse": 1.5252,
+      "rmse": 1.235,
+      "r2": 0.4195,
+      "train_time_sec": 6.38,
+      "rank": 5
+    },
+    "Multiple Linear Regression": {
+      "name": "Multiple Linear Regression",
+      "mae": 0.9699,
+      "mse": 1.5264,
+      "rmse": 1.2355,
+      "r2": 0.419,
+      "train_time_sec": 13.6,
+      "rank": 6
+    },
+    "Lasso Regression (L1)": {
+      "name": "Lasso Regression (L1)",
+      "mae": 0.9477,
+      "mse": 1.5304,
+      "rmse": 1.2371,
+      "r2": 0.4175,
+      "train_time_sec": 3.7,
+      "rank": 7
+    },
+    "Simple Linear Regression": {
+      "name": "Simple Linear Regression",
+      "mae": 1.0949,
+      "mse": 1.8766,
+      "rmse": 1.3699,
+      "r2": 0.2857,
+      "train_time_sec": 0.01,
+      "rank": 8
     }
   },
-  "best_model": "Tuned Random Forest Regressor",
+  "best_model": "Random Forest Regressor",
   "top_features": [
     {
       "feature": "Days for shipment (scheduled)",
-      "importance": 0.84565
-    },
-    {
-      "feature": "Shipping Mode_First Class",
-      "importance": 0.03522
-    },
-    {
-      "feature": "Shipping Mode_Same Day",
-      "importance": 0.02288
-    },
-    {
-      "feature": "order_hour",
-      "importance": 0.0185
+      "importance": 0.403451
     },
     {
       "feature": "Latitude",
-      "importance": 0.01165
+      "importance": 0.068501
     },
     {
       "feature": "Longitude",
-      "importance": 0.00909
+      "importance": 0.057002
+    },
+    {
+      "feature": "order_hour",
+      "importance": 0.047251
     },
     {
       "feature": "order_day",
-      "importance": 0.00604
-    },
-    {
-      "feature": "order_month",
-      "importance": 0.00392
+      "importance": 0.041471
     },
     {
       "feature": "Order Item Discount",
-      "importance": 0.00355
+      "importance": 0.034385
+    },
+    {
+      "feature": "order_month",
+      "importance": 0.028911
     },
     {
       "feature": "order_weekday",
-      "importance": 0.00328
+      "importance": 0.021485
     },
     {
       "feature": "Sales",
-      "importance": 0.00214
+      "importance": 0.018503
+    },
+    {
+      "feature": "Shipping Mode_First Class",
+      "importance": 0.016758
     },
     {
       "feature": "Product Price",
-      "importance": 0.00137
+      "importance": 0.011874
     },
     {
-      "feature": "Type_PAYMENT",
-      "importance": 0.00083
-    },
-    {
-      "feature": "Customer Segment_Corporate",
-      "importance": 0.00079
+      "feature": "Shipping Mode_Same Day",
+      "importance": 0.010774
     },
     {
       "feature": "Order Item Quantity",
-      "importance": 0.00073
+      "importance": 0.006733
     },
     {
       "feature": "Type_DEBIT",
-      "importance": 0.00067
-    },
-    {
-      "feature": "Customer Segment_Home Office",
-      "importance": 0.00063
-    },
-    {
-      "feature": "Type_CASH",
-      "importance": 0.00062
+      "importance": 0.004656
     },
     {
       "feature": "Type_TRANSFER",
-      "importance": 0.00062
+      "importance": 0.003834
     },
     {
-      "feature": "Order State_Baja California",
-      "importance": 0.00052
+      "feature": "Type_CASH",
+      "importance": 0.003817
+    },
+    {
+      "feature": "Order State_infrequent_sklearn",
+      "importance": 0.003252
+    },
+    {
+      "feature": "Customer Segment_Consumer",
+      "importance": 0.003241
+    },
+    {
+      "feature": "Type_PAYMENT",
+      "importance": 0.003153
+    },
+    {
+      "feature": "Customer Segment_Corporate",
+      "importance": 0.0031
     }
-  ],
-  "target": "Days for shipping (real)",
-  "feature_count": 21,
-  "test_size": 0.2,
-  "evaluated_at": "2026-10-12 13:00:55"
+  ]
 }

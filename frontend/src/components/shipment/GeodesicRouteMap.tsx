@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
+import L from 'leaflet';
 import { Badge } from '../ui/Badge';
-import { Compass, Globe2 } from 'lucide-react';
+import { Compass, Globe2, Layers, MapPin } from 'lucide-react';
 
 export interface GeodesicRouteMapProps {
   origin?: {
@@ -38,6 +39,8 @@ const DESTINATION_COORDS: Record<string, { lat: number; lon: number; code: strin
   Holanda: { lat: 52.1326, lon: 5.2913, code: 'AMS-NL' },
   Bélgica: { lat: 50.5039, lon: 4.4699, code: 'BRU-BE' },
   Austria: { lat: 47.5162, lon: 14.5501, code: 'VIE-AT' },
+  Polonia: { lat: 51.9194, lon: 19.1451, code: 'WAW-PL' },
+  Suiza: { lat: 46.8182, lon: 8.2275, code: 'ZRH-CH' },
   // LATAM
   Brasil: { lat: -14.235, lon: -51.9253, code: 'GRU-BR' },
   México: { lat: 23.6345, lon: -102.5528, code: 'MEX-MX' },
@@ -61,9 +64,21 @@ const DESTINATION_COORDS: Record<string, { lat: number; lon: number; code: strin
   Marruecos: { lat: 31.7917, lon: -7.0926, code: 'CMN-MA' },
 };
 
-// Haversine formula calculation for geodesic great-circle distance
+// State-level coordinates for higher precision
+const STATE_COORDS: Record<string, { lat: number; lon: number }> = {
+  Bavaria: { lat: 48.7904, lon: 11.4979 },
+  Berlin: { lat: 52.52, lon: 13.405 },
+  'Sao Paulo': { lat: -23.5505, lon: -46.6333 },
+  'Rio de Janeiro': { lat: -22.9068, lon: -43.1729 },
+  'New York': { lat: 40.7128, lon: -74.006 },
+  California: { lat: 36.7783, lon: -119.4179 },
+  Texas: { lat: 31.9686, lon: -99.9018 },
+  Illinois: { lat: 40.6331, lon: -89.3985 },
+};
+
+// Spherical Haversine calculation
 function calculateHaversineDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
-  const R = 6371; // Earth radius in kilometers
+  const R = 6371; // Earth radius in km
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
@@ -78,13 +93,50 @@ function calculateHaversineDistance(lat1: number, lon1: number, lat2: number, lo
   return { km, miles };
 }
 
-// Project coordinates (lat, lon) to SVG viewBox (800 x 360)
-function project(lat: number, lon: number, width = 800, height = 360) {
-  const x = ((lon + 180) / 360) * width;
-  // Mercator-like vertical scaling clamped to readable range
-  const clampedLat = Math.max(-65, Math.min(75, lat));
-  const y = ((75 - clampedLat) / 140) * height;
-  return { x: Math.round(x), y: Math.round(y) };
+// Generate intermediate Great Circle points between two coordinates
+function generateGreatCirclePoints(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number,
+  numPoints = 50
+): [number, number][] {
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const toDeg = (rad: number) => (rad * 180) / Math.PI;
+
+  const rlat1 = toRad(lat1);
+  const rlon1 = toRad(lon1);
+  const rlat2 = toRad(lat2);
+  const rlon2 = toRad(lon2);
+
+  // Angular distance between points
+  const d =
+    2 *
+    Math.asin(
+      Math.sqrt(
+        Math.pow(Math.sin((rlat1 - rlat2) / 2), 2) +
+          Math.cos(rlat1) * Math.cos(rlat2) * Math.pow(Math.sin((rlon1 - rlon2) / 2), 2)
+      )
+    );
+
+  if (d === 0) return [[lat1, lon1]];
+
+  const points: [number, number][] = [];
+  for (let i = 0; i <= numPoints; i++) {
+    const f = i / numPoints;
+    const A = Math.sin((1 - f) * d) / Math.sin(d);
+    const B = Math.sin(f * d) / Math.sin(d);
+
+    const x = A * Math.cos(rlat1) * Math.cos(rlon1) + B * Math.cos(rlat2) * Math.cos(rlon2);
+    const y = A * Math.cos(rlat1) * Math.sin(rlon1) + B * Math.cos(rlat2) * Math.sin(rlon2);
+    const z = A * Math.sin(rlat1) + B * Math.sin(rlat2);
+
+    const lat = toDeg(Math.atan2(z, Math.sqrt(x * x + y * y)));
+    const lon = toDeg(Math.atan2(y, x));
+    points.push([lat, lon]);
+  }
+
+  return points;
 }
 
 export const GeodesicRouteMap: React.FC<GeodesicRouteMapProps> = ({
@@ -92,53 +144,205 @@ export const GeodesicRouteMap: React.FC<GeodesicRouteMapProps> = ({
   destination,
   className = '',
 }) => {
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
+  const tileLayerRef = useRef<L.TileLayer | null>(null);
+  const layerGroupRef = useRef<L.LayerGroup | null>(null);
+
+  const [mapTheme, setMapTheme] = useState<'dark' | 'osm'>('dark');
+
+  // Resolve destination coordinate
   const destCountry = destination?.country || 'Alemania';
-  const destInfo =
-    DESTINATION_COORDS[destCountry] ||
-    (destination?.lat && destination?.lon
-      ? { lat: destination.lat, lon: destination.lon, code: 'DST-HUB' }
-      : { lat: 51.1657, lon: 10.4515, code: 'EUR-HUB' });
+  const destState = destination?.state;
 
-  // Compute points and curve
-  const { p1, p2, arcPath, distance, timeDiffHours } = useMemo(() => {
-    const originPt = project(origin.lat, origin.lon);
-    const destPt = project(destInfo.lat, destInfo.lon);
+  const destInfo = useMemo(() => {
+    if (destState && STATE_COORDS[destState]) {
+      return {
+        lat: STATE_COORDS[destState].lat,
+        lon: STATE_COORDS[destState].lon,
+        code: DESTINATION_COORDS[destCountry]?.code || 'DST-LOC',
+      };
+    }
+    if (destination?.lat && destination?.lon) {
+      return {
+        lat: destination.lat,
+        lon: destination.lon,
+        code: 'DST-LOC',
+      };
+    }
+    return (
+      DESTINATION_COORDS[destCountry] || {
+        lat: 51.1657,
+        lon: 10.4515,
+        code: 'EUR-HUB',
+      }
+    );
+  }, [destCountry, destState, destination]);
 
-    // Quadratic Bézier control point arched upward toward northern hemisphere
-    const midX = (originPt.x + destPt.x) / 2;
-    const midY = (originPt.y + destPt.y) / 2;
-    const dx = destPt.x - originPt.x;
-    const dy = destPt.y - originPt.y;
-    const chordLen = Math.sqrt(dx * dx + dy * dy);
-
-    // Arc curvature proportional to distance
-    const archAltitude = Math.min(90, Math.max(35, chordLen * 0.22));
-    const controlY = Math.max(20, midY - archAltitude);
-
-    const path = `M ${originPt.x} ${originPt.y} Q ${midX} ${controlY} ${destPt.x} ${destPt.y}`;
+  // Distance and timezone offset
+  const { distance, timeDiffHours } = useMemo(() => {
     const dist = calculateHaversineDistance(origin.lat, origin.lon, destInfo.lat, destInfo.lon);
-
-    // Approximate timezone hour offset based on 15 degrees longitude per hour
     const diffHours = Math.round((destInfo.lon - origin.lon) / 15);
-
-    return {
-      p1: originPt,
-      p2: destPt,
-      arcPath: path,
-      distance: dist,
-      timeDiffHours: diffHours,
-    };
+    return { distance: dist, timeDiffHours: diffHours };
   }, [origin, destInfo]);
+
+  // Initialize Map
+  useEffect(() => {
+    if (!mapContainerRef.current) return;
+
+    if (!mapInstanceRef.current) {
+      const map = L.map(mapContainerRef.current, {
+        center: [30, -20],
+        zoom: 3,
+        zoomControl: true,
+        attributionControl: true,
+        scrollWheelZoom: false,
+      });
+
+      // Layer group for route polylines and markers
+      const layerGroup = L.layerGroup().addTo(map);
+      layerGroupRef.current = layerGroup;
+
+      mapInstanceRef.current = map;
+    }
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, []);
+
+  // Handle Tile Layer Switching (Dark OpenStreetMap vs Standard OpenStreetMap)
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+
+    if (tileLayerRef.current) {
+      map.removeLayer(tileLayerRef.current);
+    }
+
+    const tileUrl =
+      mapTheme === 'dark'
+        ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+        : 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+
+    const attribution =
+      mapTheme === 'dark'
+        ? '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/" target="_blank">CARTO</a>'
+        : '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors';
+
+    const newTileLayer = L.tileLayer(tileUrl, {
+      attribution,
+      maxZoom: 18,
+      subdomains: 'abcd',
+    }).addTo(map);
+
+    tileLayerRef.current = newTileLayer;
+  }, [mapTheme]);
+
+  // Render Geodesic Flight Path & Markers on Map
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    const layerGroup = layerGroupRef.current;
+    if (!map || !layerGroup) return;
+
+    layerGroup.clearLayers();
+
+    // 1. Compute Great Circle path points
+    const arcPoints = generateGreatCirclePoints(origin.lat, origin.lon, destInfo.lat, destInfo.lon, 60);
+
+    // 2. Glow Polyline (outer corridor shadow)
+    const glowPath = L.polyline(arcPoints, {
+      color: '#e4f222',
+      weight: 6,
+      opacity: 0.25,
+      lineCap: 'round',
+    });
+    layerGroup.addLayer(glowPath);
+
+    // 3. Primary Geodesic Trajectory Polyline
+    const routePath = L.polyline(arcPoints, {
+      color: '#e4f222',
+      weight: 2.5,
+      opacity: 0.95,
+      dashArray: '8, 6',
+      lineCap: 'round',
+    });
+    layerGroup.addLayer(routePath);
+
+    // 4. Origin Marker (Caguas, Puerto Rico)
+    const originIcon = L.divIcon({
+      className: 'bg-transparent',
+      html: `
+        <div style="position: relative; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">
+          <div style="position: absolute; width: 24px; height: 24px; border-radius: 50%; background: rgba(2, 184, 204, 0.35); animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+          <div style="width: 12px; height: 12px; border-radius: 50%; background: #02b8cc; border: 2px solid #08090a; box-shadow: 0 0 10px #02b8cc;"></div>
+          <div style="position: absolute; top: -22px; left: 50%; transform: translateX(-50%); background: #0f1011; border: 1px solid #23252a; color: #02b8cc; font-family: monospace; font-size: 10px; font-weight: bold; padding: 1px 6px; border-radius: 4px; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.6);">
+            SJU-HUB
+          </div>
+        </div>
+      `,
+      iconSize: [20, 20],
+      iconAnchor: [10, 10],
+    });
+
+    const originMarker = L.marker([origin.lat, origin.lon], { icon: originIcon });
+    originMarker.bindPopup(`
+      <div style="font-family: monospace; font-size: 11px; color: #ffffff; background: #0f1011; padding: 4px 6px; border-radius: 4px;">
+        <strong style="color: #02b8cc;">Origin Fulfillment Hub</strong><br/>
+        ${origin.name}<br/>
+        Coord: ${origin.lat.toFixed(3)}, ${origin.lon.toFixed(3)}
+      </div>
+    `);
+    layerGroup.addLayer(originMarker);
+
+    // 5. Destination Marker
+    const destIcon = L.divIcon({
+      className: 'bg-transparent',
+      html: `
+        <div style="position: relative; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;">
+          <div style="position: absolute; width: 28px; height: 28px; border-radius: 50%; background: rgba(228, 242, 34, 0.4); animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+          <div style="width: 14px; height: 14px; border-radius: 50%; background: #e4f222; border: 2px solid #08090a; box-shadow: 0 0 12px #e4f222;"></div>
+          <div style="position: absolute; top: -22px; left: 50%; transform: translateX(-50%); background: #0f1011; border: 1px solid #23252a; color: #ffffff; font-family: monospace; font-size: 10px; font-weight: bold; padding: 1px 6px; border-radius: 4px; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.6);">
+            ${destCountry.toUpperCase()}
+          </div>
+        </div>
+      `,
+      iconSize: [22, 22],
+      iconAnchor: [11, 11],
+    });
+
+    const destMarker = L.marker([destInfo.lat, destInfo.lon], { icon: destIcon });
+    destMarker.bindPopup(`
+      <div style="font-family: monospace; font-size: 11px; color: #ffffff; background: #0f1011; padding: 4px 6px; border-radius: 4px;">
+        <strong style="color: #e4f222;">Delivery Destination</strong><br/>
+        ${destCountry} ${destState ? `(${destState})` : ''}<br/>
+        Coord: ${destInfo.lat.toFixed(3)}, ${destInfo.lon.toFixed(3)}
+      </div>
+    `);
+    layerGroup.addLayer(destMarker);
+
+    // 6. Smoothly auto-fit bounds with padding
+    const bounds = L.latLngBounds([
+      [origin.lat, origin.lon],
+      [destInfo.lat, destInfo.lon],
+    ]);
+    map.fitBounds(bounds, { padding: [50, 50], maxZoom: 6 });
+  }, [origin, destInfo, destCountry, destState]);
 
   return (
     <div
-      className={`rounded-[10px] bg-[#08090a] border border-[#23252a] overflow-hidden flex flex-col ${className}`}
+      className={`rounded-[12px] bg-[#08090a] border border-[#23252a] overflow-hidden flex flex-col shadow-2xl ${className}`}
     >
       {/* Top Map HUD Bar */}
       <div className="px-4 py-2.5 bg-[#0f1011] border-b border-[#23252a] flex items-center justify-between text-[11px] font-mono flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <Globe2 className="w-3.5 h-3.5 text-[#02b8cc]" />
-          <span className="text-[#ffffff] font-medium">GEODESIC TRANSIT CORRIDOR</span>
+          <span className="text-[#ffffff] font-medium tracking-wide">
+            OPENSTREETMAP GEODESIC CORRIDOR
+          </span>
           <span className="text-[#62666d]">|</span>
           <span className="text-[#8a8f98]">
             {origin.code} → {destInfo.code}
@@ -155,126 +359,67 @@ export const GeodesicRouteMap: React.FC<GeodesicRouteMapProps> = ({
           <span className="text-[#38bdf8]">
             {timeDiffHours >= 0 ? `+${timeDiffHours}h` : `${timeDiffHours}h`} Shift
           </span>
+
+          {/* Map Layer Switcher: Dark OSM vs Standard OSM */}
+          <div className="flex items-center ml-1 rounded-[5px] bg-[#161718] border border-[#23252a] p-0.5">
+            <button
+              type="button"
+              onClick={() => setMapTheme('dark')}
+              className={`px-2 py-0.5 rounded-[4px] text-[10px] font-medium transition-colors cursor-pointer ${
+                mapTheme === 'dark'
+                  ? 'bg-[#e4f222] text-[#08090a]'
+                  : 'text-[#8a8f98] hover:text-[#ffffff]'
+              }`}
+              title="Dark OpenStreetMap tiles"
+            >
+              Dark OSM
+            </button>
+            <button
+              type="button"
+              onClick={() => setMapTheme('osm')}
+              className={`px-2 py-0.5 rounded-[4px] text-[10px] font-medium transition-colors cursor-pointer ${
+                mapTheme === 'osm'
+                  ? 'bg-[#e4f222] text-[#08090a]'
+                  : 'text-[#8a8f98] hover:text-[#ffffff]'
+              }`}
+              title="Standard OpenStreetMap tiles"
+            >
+              Standard OSM
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* SVG Canvas */}
-      <div className="relative w-full h-44 sm:h-52 bg-[#08090a]">
-        <svg
-          viewBox="0 0 800 360"
-          className="w-full h-full object-cover select-none"
-          preserveAspectRatio="xMidYMid meet"
-        >
-          <defs>
-            {/* Glow Filter */}
-            <filter id="arcGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="3" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
+      {/* Leaflet Real OpenStreetMap Container */}
+      <div className="relative w-full h-56 sm:h-72 bg-[#08090a]">
+        <div ref={mapContainerRef} className="w-full h-full z-0 select-none" />
 
-            {/* Linear Gradient for Arc */}
-            <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#02b8cc" stopOpacity="0.9" />
-              <stop offset="50%" stopColor="#e4f222" stopOpacity="1" />
-              <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.9" />
-            </linearGradient>
-          </defs>
-
-          {/* Latitude & Longitude Coordinate Grid Lines */}
-          <g stroke="#161718" strokeWidth="0.8" opacity="0.6">
-            <line x1="0" y1="90" x2="800" y2="90" />
-            <line x1="0" y1="180" x2="800" y2="180" stroke="#23252a" strokeDasharray="3,3" />
-            <line x1="0" y1="270" x2="800" y2="270" />
-            <line x1="200" y1="0" x2="200" y2="360" />
-            <line x1="400" y1="0" x2="400" y2="360" stroke="#23252a" strokeDasharray="3,3" />
-            <line x1="600" y1="0" x2="600" y2="360" />
-          </g>
-
-          {/* Minimalist Vector Landmass Outlines */}
-          <g fill="#111315" stroke="#1f2227" strokeWidth="0.75" opacity="0.85">
-            {/* North America */}
-            <path d="M 80,60 L 140,40 L 220,50 L 230,95 L 180,120 L 160,170 L 120,160 L 90,120 Z" />
-            {/* South America */}
-            <path d="M 190,180 L 250,200 L 270,260 L 220,330 L 190,260 Z" />
-            {/* Europe */}
-            <path d="M 380,50 L 460,45 L 480,95 L 440,120 L 370,110 Z" />
-            {/* Africa */}
-            <path d="M 370,130 L 470,130 L 490,200 L 440,290 L 380,240 Z" />
-            {/* Asia */}
-            <path d="M 480,50 L 680,60 L 710,130 L 590,170 L 510,120 Z" />
-            {/* Australia */}
-            <path d="M 640,230 L 730,240 L 710,310 L 630,290 Z" />
-          </g>
-
-          {/* Great Circle Flight Path Curve (Glow Shadow) */}
-          <path
-            d={arcPath}
-            fill="none"
-            stroke="#e4f222"
-            strokeWidth="3.5"
-            strokeOpacity="0.15"
-            filter="url(#arcGlow)"
-          />
-
-          {/* Great Circle Flight Path Curve (Primary Line) */}
-          <path
-            d={arcPath}
-            fill="none"
-            stroke="url(#routeGradient)"
-            strokeWidth="1.8"
-            strokeDasharray="5,4"
-            className="animate-[dash_20s_linear_infinite]"
-          />
-
-          {/* Origin Radar & Marker (Caguas Hub) */}
-          <g transform={`translate(${p1.x}, ${p1.y})`}>
-            <circle r="9" fill="#02b8cc" fillOpacity="0.15" className="animate-ping" />
-            <circle r="4" fill="#02b8cc" stroke="#08090a" strokeWidth="1.5" />
-            <text
-              x="8"
-              y="-6"
-              fill="#02b8cc"
-              fontSize="9"
-              fontFamily="monospace"
-              fontWeight="bold"
-            >
-              PR HUB
-            </text>
-          </g>
-
-          {/* Destination Radar & Marker */}
-          <g transform={`translate(${p2.x}, ${p2.y})`}>
-            <circle r="11" fill="#e4f222" fillOpacity="0.2" className="animate-ping" />
-            <circle r="4.5" fill="#e4f222" stroke="#08090a" strokeWidth="1.5" />
-            <text
-              x="8"
-              y="-6"
-              fill="#ffffff"
-              fontSize="9.5"
-              fontFamily="monospace"
-              fontWeight="bold"
-            >
-              {destCountry.toUpperCase()}
-            </text>
-          </g>
-        </svg>
+        {/* Ambient Map Overlay Corner Tags */}
+        <div className="pointer-events-none absolute bottom-2 left-2 z-[400] flex items-center gap-1.5 px-2 py-1 rounded-[4px] bg-[#0f1011]/90 backdrop-blur-md border border-[#23252a] text-[10px] font-mono text-[#8a8f98]">
+          <Layers className="w-3 h-3 text-[#e4f222]" />
+          <span>Interactive OpenStreetMap Engine</span>
+        </div>
       </div>
 
       {/* Bottom Telemetry Metrics Strip */}
-      <div className="px-4 py-2 bg-[#0f1011] border-t border-[#23252a] grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px] font-mono">
+      <div className="px-4 py-2.5 bg-[#0f1011] border-t border-[#23252a] grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px] font-mono">
         <div>
           <span className="text-[#62666d] block text-[9.5px]">FULFILLMENT ORIGIN</span>
-          <span className="text-[#02b8cc] font-medium">{origin.name}</span>
+          <span className="text-[#02b8cc] font-medium flex items-center gap-1">
+            <MapPin className="w-3 h-3" />
+            {origin.name}
+          </span>
         </div>
         <div>
           <span className="text-[#62666d] block text-[9.5px]">TRANSIT DESTINATION</span>
-          <span className="text-[#ffffff] font-medium">
-            {destCountry} {destination?.state ? `(${destination.state})` : ''}
+          <span className="text-[#ffffff] font-medium flex items-center gap-1">
+            <MapPin className="w-3 h-3 text-[#e4f222]" />
+            {destCountry} {destState ? `(${destState})` : ''}
           </span>
         </div>
         <div className="col-span-2 sm:col-span-1 flex items-center sm:justify-end gap-2">
           <Badge variant="lime" size="sm">
-            Active Geodesic Vector
+            Live Great-Circle Geodesic
           </Badge>
         </div>
       </div>

@@ -33,81 +33,121 @@
   "selected_final_model": "Random Forest Regressor",
   "metrics": {
     "mae": 0.6938,
-    "mse": 0.9457,
-    "rmse": 0.9725,
-    "r2": 0.64,
-    "train_time_sec": 79.77
+    "mse": 0.9438,
+    "rmse": 0.9715,
+    "r2": 0.6408,
+    "train_time_sec": 486.92
   },
   "model_comparison": [
     {
       "name": "Random Forest Regressor",
       "mae": 0.6938,
-      "mse": 0.9457,
-      "rmse": 0.9725,
-      "r2": 0.64,
-      "train_time_sec": 79.77
+      "mse": 0.9438,
+      "rmse": 0.9715,
+      "r2": 0.6408,
+      "train_time_sec": 486.92,
+      "rank": 1
     },
     {
       "name": "Tuned Random Forest Regressor",
-      "mae": 0.8939,
-      "mse": 1.4478,
-      "rmse": 1.2032,
-      "r2": 0.4489,
-      "train_time_sec": 7.65
+      "mae": 0.8935,
+      "mse": 1.4465,
+      "rmse": 1.2027,
+      "r2": 0.4494,
+      "train_time_sec": 244.37,
+      "rank": 2
+    },
+    {
+      "name": "XGBoost Regressor",
+      "mae": 0.905,
+      "mse": 1.4627,
+      "rmse": 1.2094,
+      "r2": 0.4433,
+      "train_time_sec": 6.95,
+      "rank": 3
     },
     {
       "name": "Decision Tree Regressor",
-      "mae": 0.9061,
-      "mse": 1.5083,
-      "rmse": 1.2281,
-      "r2": 0.4259,
-      "train_time_sec": 0.87
+      "mae": 0.906,
+      "mse": 1.5074,
+      "rmse": 1.2278,
+      "r2": 0.4263,
+      "train_time_sec": 7.3,
+      "rank": 4
     },
     {
-      "name": "Linear Regression",
-      "mae": 0.9701,
-      "mse": 1.5272,
-      "rmse": 1.2358,
-      "r2": 0.4187,
-      "train_time_sec": 0.81
+      "name": "Ridge Regression (L2)",
+      "mae": 0.9692,
+      "mse": 1.5252,
+      "rmse": 1.235,
+      "r2": 0.4195,
+      "train_time_sec": 6.38,
+      "rank": 5
+    },
+    {
+      "name": "Multiple Linear Regression",
+      "mae": 0.9699,
+      "mse": 1.5264,
+      "rmse": 1.2355,
+      "r2": 0.419,
+      "train_time_sec": 13.6,
+      "rank": 6
+    },
+    {
+      "name": "Lasso Regression (L1)",
+      "mae": 0.9477,
+      "mse": 1.5304,
+      "rmse": 1.2371,
+      "r2": 0.4175,
+      "train_time_sec": 3.7,
+      "rank": 7
+    },
+    {
+      "name": "Simple Linear Regression",
+      "mae": 1.0949,
+      "mse": 1.8766,
+      "rmse": 1.3699,
+      "r2": 0.2857,
+      "train_time_sec": 0.01,
+      "rank": 8
     }
   ],
   "top_feature_importances": [
     {
       "feature": "Days for shipment (scheduled)",
-      "importance": 0.40348
+      "importance": 0.403451
     },
     {
       "feature": "Latitude",
-      "importance": 0.068448
+      "importance": 0.068501
     },
     {
       "feature": "Longitude",
-      "importance": 0.056929
+      "importance": 0.057002
     },
     {
       "feature": "order_hour",
-      "importance": 0.047184
+      "importance": 0.047251
     },
     {
       "feature": "order_day",
-      "importance": 0.04147
+      "importance": 0.041471
     },
     {
       "feature": "Order Item Discount",
-      "importance": 0.03474
+      "importance": 0.034385
     },
     {
       "feature": "order_month",
-      "importance": 0.028782
+      "importance": 0.028911
     },
     {
       "feature": "order_weekday",
-      "importance": 0.021278
+      "importance": 0.021485
     },
     {
       "feature": "Sales",
-      "importance": 0.018572
+      "importance": 0.018503
     },
     {
       "feature": "Shipping Mode_First Class",
@@ -115,7 +155,7 @@
     },
     {
       "feature": "Product Price",
-      "importance": 0.011756
+      "importance": 0.011874
     },
     {
       "feature": "Shipping Mode_Same Day",
@@ -123,36 +163,36 @@
     },
     {
       "feature": "Order Item Quantity",
-      "importance": 0.006835
+      "importance": 0.006733
     },
     {
       "feature": "Type_DEBIT",
-      "importance": 0.004667
+      "importance": 0.004656
     },
     {
       "feature": "Type_TRANSFER",
-      "importance": 0.003882
+      "importance": 0.003834
     },
     {
       "feature": "Type_CASH",
-      "importance": 0.003846
-    },
-    {
-      "feature": "Customer Segment_Consumer",
-      "importance": 0.00327
+      "importance": 0.003817
     },
     {
       "feature": "Order State_infrequent_sklearn",
-      "importance": 0.00323
+      "importance": 0.003252
+    },
+    {
+      "feature": "Customer Segment_Consumer",
+      "importance": 0.003241
     },
     {
       "feature": "Type_PAYMENT",
-      "importance": 0.003208
+      "importance": 0.003153
     },
     {
       "feature": "Customer Segment_Corporate",
-      "importance": 0.003014
+      "importance": 0.0031
     }
   ],
-  "evaluated_at": "2026-11-01 14:21:47"
+  "evaluated_at": "2026-11-01 09:16:55"
 }
