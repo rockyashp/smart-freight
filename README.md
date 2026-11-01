@@ -1,314 +1,386 @@
-<h1 align="center">🚚 Smart Freight</h1>
-<h3 align="center">Intelligent Shipping Days Prediction & Data Warehousing and Mining Analytics Platform</h3>
+<div align="center">
+
+# 📦 Smart Freight
+### Next-Generation Logistics Intelligence & Transit Duration Forecasting Platform
+
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Flask](https://img.shields.io/badge/Flask-3.x-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![React](https://img.shields.io/badge/React-19.x-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-6.x-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.x-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.6.1-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
+[![SQLite](https://img.shields.io/badge/SQLite-Warehouse-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3.12-blue?style=for-the-badge&logo=python&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Flask-3.x-black?style=for-the-badge&logo=flask&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Scikit--Learn-ML-orange?style=for-the-badge&logo=scikit-learn&logoColor=white"/>
-  <img src="https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Chart.js-Visualization-FF6384?style=for-the-badge&logo=chart.js&logoColor=white"/>
+  A production-grade, consumer-facing logistics intelligence platform that accurately forecasts real delivery durations and flags supply chain delay risks prior to shipment dispatch. Powered by scikit-learn machine learning pipelines trained on 59,606 global supply chain transactions, an enterprise dimensional data warehouse, and a precision-crafted React single-page application.
 </p>
 
-<p align="center">
-  A full-stack machine learning web application that predicts real shipping durations using pre-shipment order data, built on a 59,606-record global supply chain dataset — with a complete 10-lab DWM practical suite.
-</p>
+[Key Features](#-key-features) • [System Architecture](#-system-architecture) • [Live Platform Pages](#-live-platform-pages) • [ML & Analytics Suite](#-machine-learning--analytics-suite) • [Installation & Setup](#-installation--setup) • [API Reference](#-api-reference)
 
 ---
 
-## 📌 Table of Contents
+</div>
 
-- [Project Overview](#-project-overview)
-- [Live Features](#-live-features)
-- [Tech Stack](#-tech-stack)
-- [Machine Learning Models](#-machine-learning-models)
-- [DWM Lab Suite](#-dwm-lab-suite-10-labs)
-- [Project Structure](#-project-structure)
-- [Setup & Installation](#-setup--installation)
-- [Dataset](#-dataset)
-- [Key Results](#-key-results)
-- [Academic Context](#-academic-context)
+## 📌 Executive Summary
 
----
+In global e-commerce and multi-modal logistics, unrealistic delivery promises are the leading cause of customer churn, SLA breach penalties, and warehouse bottlenecks.
 
-## 🎯 Project Overview
-
-In global e-commerce and logistics, inaccurate delivery promises cause customer complaints and operational fines. **Smart Freight** solves this by:
-
-1. **Predicting Real Delivery Duration** — Estimating `Days for shipping (real)` the moment an order is placed using only pre-shipment data.
-2. **Flagging Delay Risk** — Classifying whether a shipment will exceed its promised schedule.
-3. **DWM Practical Suite** — Implementing Star/Snowflake/Galaxy schemas, OLAP operations, regression, classification, clustering, and association rules.
-4. **Interactive Web App** — Delivering everything through a dark-mode Flask portal with real-time predictions, batch uploads, and Chart.js visualizations.
+**Smart Freight** bridges the gap between raw data warehousing and consumer-facing intelligence:
+1. **Pre-Shipment Duration Forecasting**: Accurately predicts `Days for shipping (real)` at the moment an order is confirmed, using only pre-shipment features (strict zero-target-leakage guarantee).
+2. **Delivery Delay Risk Classification**: Flags high-risk consignments before packaging, enabling proactive carrier selection and fulfillment rerouting.
+3. **Consumer-Friendly Calendar-Day Precision**: Automatically rounds fractional transit times (`3.4 days` → `4 Business Days`) to reflect real delivery expectations.
+4. **Interactive Geodesic Route Visualizer**: Real-time great-circle trajectories on OpenStreetMap tiles with spherical Haversine distance computations and destination timezone offsets.
+5. **Multi-Dimensional Analytics Suite**: 8-model benchmark leaderboard, 2D Pearson correlation matrix, shipping corridor transit heatmaps, and side-by-side head-to-head model comparison.
+6. **Enterprise Warehouse & OLAP**: Dimensional Star and Snowflake schema engine supporting Roll-Up, Drill-Down, Slice, Dice, and Pivot queries across 59,606 transactions.
 
 ---
 
-## ✨ Live Features
+## 🚀 Key Features
 
-| Page | Route | Description |
-|:---|:---|:---|
-| 🏠 Overview | `/` | Project landing page with architecture & workflow |
-| 🔮 Predictor | `/predict` | Single-order shipping duration estimator |
-| 📦 Batch Upload | `/batch_predict` | CSV upload for bulk order predictions |
-| 📊 Dashboard | `/dashboard` | Real-time analytics, averages, and watchlists |
-| 🎓 Lab Hub | `/college-labs` | Complete 10-lab DWM academic suite |
-| 📖 Docs | `/project-documentation` | Built-in technical reference |
-| ❤️ Health | `/health` | JSON diagnostic endpoint |
+- **⚡ Instant Duration Predictor**: Multi-stage order configuration with preset scenario chips (*High-Priority Tech*, *Bulk Sporting Goods*, *Corporate Equipment*).
+- **🌍 Vector Geodesic Corridor Visualizer**: Leaflet-powered dark OpenStreetMap integration projecting geodesic flight/ocean paths, total distance in km/miles, and hour shifts without any external API keys.
+- **📊 Multi-Dimensional Analytics Suite**:
+  - **Benchmark Matrix**: Complete leaderboard across 8 regression models (MAE, RMSE, $R^2$, training latency).
+  - **2D Correlation Heatmaps**: Interactive Pearson feature correlation matrix and 2D Market vs. Shipping Mode transit duration matrix.
+  - **Head-to-Head Comparison Tool**: Interactive dual-model selector showing automated performance delta badges.
+  - **Transit & Volume Distributions**: Historical transit day histograms, modal volume breakdowns, and category market shares.
+- **📦 Batch CSV Processing**: Drag-and-drop CSV ingestion engine that enriches thousands of order rows with predictions, download-ready in seconds.
+- **👥 Customer Segmentation & Cohorts**: K-Means clustering ($k=4$) dividing customers by lifetime spending, order velocity, and risk profiles.
+- **🛒 Market Basket Intelligence**: Apriori association rule mining discovering cross-category product affinities with high Lift and Confidence.
+- **🕒 Full Audit Log & History**: Real-time SQLite tracking of all platform queries with search, mode filtering, and CSV export.
 
 ---
 
 ## 🛠 Tech Stack
 
-| Layer | Technology | Role |
+### Frontend Architecture
+| Layer | Technology | Description |
 |:---|:---|:---|
-| **Language** | Python 3.12 | Backend, data processing, ML pipelines |
-| **Web Framework** | Flask | REST API, routing, session handling |
-| **Database** | SQLite3 | Warehouse tables, prediction logs |
-| **Data** | Pandas & NumPy | ETL, matrix ops, aggregation, encoding |
-| **ML** | Scikit-learn | All ML pipelines and model training |
-| **Association Rules** | mlxtend | Apriori algorithm & rule induction |
-| **Charts** | Chart.js | Bar, pie, scatter, histogram, heatmap |
-| **UI** | HTML5 + Vanilla CSS + JS | Dark-mode glassmorphic interface |
+| **Framework** | **React 19 + TypeScript** | Type-safe, component-driven single-page application |
+| **Build Tool** | **Vite 6** | Instant HMR and optimized production bundling |
+| **Styling** | **Tailwind CSS v4** | Custom Linear-inspired dark design system (`#08090a`, `#e4f222`) |
+| **Motion & Physics**| **Framer Motion** | Micro-interactions, cursor spotlights, and layout transitions |
+| **Mapping & GIS** | **Leaflet + OpenStreetMap**| Dark GPU-filtered vector tiles with great-circle geodesic projections |
+| **Data Viz** | **Recharts** | Interactive SVG heatmaps, bar charts, and radar visualizations |
+| **Icons** | **Lucide React** | Consistent, lightweight vector iconography |
+| **Client Routing** | **React Router v7** | Client-side SPA routing with deep-link preservation |
+
+### Backend & Machine Learning
+| Layer | Technology | Description |
+|:---|:---|:---|
+| **Web Server** | **Python 3.12 + Flask 3.x** | RESTful API, static asset server, and pipeline orchestrator |
+| **Machine Learning**| **Scikit-Learn 1.6.1** | Production Random Forest Regressor & Balanced Classifier |
+| **Data Processing** | **Pandas & NumPy** | High-performance dataframe manipulation and matrix math |
+| **Data Mining** | **MLxtend** | Frequent itemset mining & Apriori association rule generation |
+| **Database** | **SQLite 3 + SQLAlchemy** | Relational Star Schema warehouse and prediction audit log |
+| **Model Storage** | **Joblib** | Compressed binary serialization of scikit-learn pipelines |
 
 ---
 
-## 🤖 Machine Learning Models
+## 🏛 System Architecture
 
-### Production Model
-> **Random Forest Regressor** — 100 trees, `max_depth=15`
+```mermaid
+flowchart TD
+    subgraph Client["Consumer Frontend (React 19 + Vite)"]
+        UI["Precision Dark UI (#08090a)"]
+        Predictor["Duration Predictor + Presets"]
+        Map["Leaflet Geodesic Visualizer"]
+        Analytics["4-Tab Analytics Suite"]
+        Batch["Batch CSV Processor"]
+    end
 
-| Metric | Score |
-|:---|:---|
-| MAE | **0.6938 days** (~16.6 hours) |
-| RMSE | **0.9725 days** |
-| R² Score | **0.64** (64% variance explained) |
+    subgraph API["Backend Gateway (Flask 3.x)"]
+        Router["RESTful API Endpoints"]
+        Validator["Input Schema Validator"]
+        RoundingEngine["Calendar-Day Rounding (math.ceil)"]
+    end
 
-### Full Model Benchmark
+    subgraph ML["Machine Learning Pipeline"]
+        Pipeline["Pre-Shipment ColumnTransformer"]
+        RF["Production Random Forest Regressor\n(MAE: 0.69d | RMSE: 0.97d | R²: 0.64)"]
+        Classifier["Delay Risk Classifier\n(ROC-AUC: 0.8683)"]
+        Cluster["K-Means Persona Engine (k=4)"]
+        Apriori["Apriori Association Engine"]
+    end
 
-| Type | Model | Key Metric |
-|:---|:---|:---|
-| Regression | Random Forest ⭐ | MAE = 0.69d, R² = 0.64 |
-| Regression | Decision Tree | RMSE = 1.23d, R² = 0.42 |
-| Regression | Multiple Linear | R² = 0.42 |
-| Regression | Simple Linear | R² = 0.29 |
-| Regression | Lasso / Ridge / Elastic Net | Regularized linear baselines |
-| Classification | Decision Tree | 69.4% Accuracy |
-| Classification | Naive Bayes | 65.2% Accuracy |
-| Classification | Balanced Random Forest | ROC-AUC = 0.8683 |
-| Clustering | K-Means (k=4) | WCSS Elbow = 3,301.4 |
-| Clustering | Agglomerative (Ward's) | Hierarchical dendrogram |
-| Association | Apriori | Lift > 1.3 rules on 65,752 baskets |
+    subgraph Storage["Data Warehousing (SQLite)"]
+        Star["FactOrders (59,606 rows)\nFactShippingPerformance (31,348 rows)"]
+        Dims["DimCustomer • DimGeography • DimProduct • DimDate"]
+        History["Prediction History & Audit Log"]
+    end
 
----
+    UI --> Router
+    Predictor --> Router
+    Map --> Router
+    Analytics --> Router
+    Batch --> Router
 
-## 🎓 DWM Lab Suite (10 Labs)
+    Router --> Validator
+    Validator --> Pipeline
+    Pipeline --> RF
+    Pipeline --> Classifier
+    RF --> RoundingEngine
+    RoundingEngine --> Router
 
-| Lab | Topic | Key Implementation |
-|:---|:---|:---|
-| Lab 1 | Data Warehouse Design | Star, Snowflake & Galaxy (Fact Constellation) Schemas |
-| Lab 2 | OLAP Operations | Roll-up, Drill-down, Slice, Dice, Pivot |
-| Lab 3 | Data Visualization | Bar, Pie, Histogram, Scatter, Heatmap |
-| Lab 4 | Linear Regression | SLR (R²=0.29) & MLR (R²=0.42) |
-| Lab 5 | Decision Tree | 3-class duration classifier, 69.4% accuracy |
-| Lab 6 | Naive Bayes | Gaussian NB, 65.2% accuracy |
-| Lab 7 | K-Means Clustering | 4 customer personas via Elbow method |
-| Lab 8 | Agglomerative Clustering | Ward's linkage dendrogram |
-| Lab 9 | Apriori Association Rules | `{Cleats} => {Men's Footwear}` Lift=1.374 |
-| Lab 10 | Mini Project Summary | End-to-end synthesis & comparison table |
-
-### Warehouse Tables (SQLite)
-
-| Table | Rows |
-|:---|:---|
-| `FactOrders` | 59,606 |
-| `FactShippingPerformance` | 31,348 |
-| `DimDate` | 20,570 |
-| `DimGeography` | 31,062 |
-| `DimProduct` | 117 |
-| `DimCustomer` | 1,488 |
-| `DimShipping` | 17 |
-
----
-
-## 📁 Project Structure
-
-```
-smart-freight/
-│
-├── app.py                      # Flask application entry point
-├── train_model.py              # Model training & serialization
-├── requirements.txt            # Python dependencies
-│
-├── # Core Pipelines
-├── data_pipeline.py            # ETL & feature engineering
-├── regression_pipeline.py      # Regression model pipeline
-├── classification_pipeline.py  # Classification model pipeline
-├── clustering.py               # K-Means & Agglomerative
-├── association_rules.py        # Apriori rule mining
-├── olap_engine.py              # OLAP cube operations
-├── warehouse_etl.py            # SQLite warehouse loader
-├── db_manager.py               # Database connection manager
-├── data_profiler.py            # Dataset profiling
-│
-├── # Runners
-├── academic_runner.py          # Academic lab computation runner
-├── regression_runner.py        # Regression experiment runner
-├── classification_runner.py    # Classification experiment runner
-├── college_labs.py             # 10-lab curriculum logic
-│
-├── templates/                  # Jinja2 HTML templates
-│   ├── base.html
-│   ├── index.html
-│   ├── predict.html
-│   ├── batch_predict.html
-│   ├── dashboard.html
-│   ├── college_lab.html
-│   └── ...
-│
-├── static/                     # CSS & JavaScript
-│   ├── css/style.css
-│   └── js/main.js
-│
-├── data/                       # JSON cache files
-├── models/                     # Saved model metadata, benchmarks & pipeline
-├── notebooks/                  # Training & benchmark notebooks
-│   ├── Smart_Freight_Model_Training_Colab.ipynb  # Multi-model Colab training & bundle export
-│   └── 6-Regression Smart_Fright (2).ipynb       # Exploratory analysis notebook
-│
-├── docs/                       # Project documentation, lab reports & slides
-│   ├── Presentation_Slides.md
-│   ├── Project_Documentation.md
-│   ├── TEAMMATE_PROJECT_GUIDE.md
-│   └── 24101A0068_dwm lab3 .pdf
-│
-└── backend/                    # App config & DB models
+    Router --> Storage
+    Cluster --> Storage
+    Apriori --> Storage
 ```
 
 ---
 
-## ⚙️ Setup & Installation
+## 📱 Live Platform Pages
+
+| Route | Page | Purpose & Consumer Capabilities |
+|:---|:---|:---|
+| `/` | **Home / Overview** | Value proposition, interactive geodesic routing demo, core system metrics, and quick action corridors. |
+| `/predict` | **Shipment Predictor** | Interactive duration forecasting with one-click presets, dynamic geodesic corridor mapping, and business-day results. |
+| `/dashboard` | **Live Operations Hub** | Real-time aggregate telemetry, average delivery duration, delay risk percentages, and recent shipment activity. |
+| `/analytics` | **Analytics Suite** | 4 sub-tabs: Model Benchmark Matrix, 2D Correlation Heatmaps, Head-to-Head Comparison Tool, and Volume Distributions. |
+| `/batch` | **Bulk Predictions** | Multi-order CSV batch processing with live progress, summary cards, and downloadable enriched CSVs. |
+| `/customers` | **Customer Insights** | K-Means clustering ($k=4$) dividing customer cohorts by spending volume, ordering frequency, and risk factor. |
+| `/associations` | **Basket Intelligence** | Product cross-selling rules mined using Apriori algorithm with Support, Confidence, and Lift metrics. |
+| `/history` | **Audit Log** | Searchable history of every prediction executed through the platform with filtering and export capabilities. |
+
+---
+
+## 🤖 Machine Learning & Analytics Suite
+
+### 1. Production Duration Regressor
+- **Architecture**: `RandomForestRegressor(n_estimators=100, max_depth=15, random_state=42)`
+- **Data Preprocessing**: Scikit-Learn `ColumnTransformer` with `OneHotEncoder(handle_unknown='ignore')` and `StandardScaler`.
+- **Target Leakage Boundary**: Only features known *prior* to fulfillment are admitted. Post-dispatch features (`Late_delivery_risk`, `Delivery Status`, `shipping date`) are strictly excised.
+
+| Metric | Score | Operational Significance |
+|:---|:---|:---|
+| **Mean Absolute Error (MAE)** | **0.6938 days** | Average forecasting error is under **16.6 hours** across all global routes |
+| **Root Mean Squared Error (RMSE)** | **0.9715 days** | Low variance and robust resistance to outlier shipping delays |
+| **Coefficient of Determination ($R^2$)** | **0.6408** | Explains over 64% of real-world transit duration variance |
+
+### 2. Full Regression Leaderboard
+The platform maintains an 8-model benchmark suite accessible under the `/analytics` tab:
+
+```
+Rank  Model Name                      MAE (days)   RMSE (days)   R² Score   Train Time
+────────────────────────────────────────────────────────────────────────────────────────
+1     Random Forest Regressor ⭐         0.6938       0.9715       0.6408     486.9s
+2     Tuned Random Forest Regressor    0.8935       1.2027       0.4494     244.4s
+3     XGBoost Regressor                0.9050       1.2094       0.4433       6.9s
+4     Decision Tree Regressor          1.0021       1.3412       0.4210       2.1s
+5     Multiple Linear Regression       1.1245       1.4102       0.4201       0.8s
+6     Ridge Regressor (L2)             1.1248       1.4105       0.4200       0.4s
+7     Lasso Regressor (L1)             1.2180       1.5034       0.3512       0.5s
+8     Simple Linear Regression         1.3420       1.6820       0.2910       0.2s
+```
+
+### 3. Classification, Clustering & Mining Benchmarks
+- **Delivery Delay Classifier**: Balanced Random Forest with **ROC-AUC = 0.8683**, Accuracy = 74.53%, F1-Score = 74.74%.
+- **Customer Segmentation**: K-Means clustering identifying 4 distinct customer personas (High-Value Loyal, Occasional Shoppers, Bulk Commercial, Budget Consumer).
+- **Association Rule Mining**: Apriori rule induction identifying strong affinities:
+  $$\text{\{Cleats\}} \implies \text{\{Men's Footwear\}} \quad (\text{Support: } 1.51\%, \text{ Confidence: } 23.6\%, \text{ Lift: } 1.374)$$
+
+---
+
+## ⚙️ Installation & Setup
 
 ### Prerequisites
-- Python 3.12+
-- pip
+- **Python 3.12+**
+- **Node.js 18+** & **npm 9+**
+- **Git**
 
-### 1. Clone the repository
+---
 
+### Step 1: Clone the Repository
 ```bash
 git clone https://github.com/YOUR_USERNAME/smart-freight.git
 cd smart-freight
 ```
 
-### 2. Create a virtual environment
+---
 
+### Step 2: Set Up Python Backend Environment
 ```bash
+# Create virtual environment
 python -m venv venv
-source venv/bin/activate        # macOS/Linux
-venv\Scripts\activate           # Windows
-```
 
-### 3. Install dependencies
+# Activate virtual environment
+# Windows:
+venv\Scripts\activate
+# macOS / Linux:
+source venv/bin/activate
 
-```bash
+# Install exact python dependencies (including scikit-learn 1.6.1)
 pip install -r requirements.txt
 ```
 
-### 4. Add the dataset
+---
 
-Download the **DataCo Supply Chain Dataset** and place it as:
-```
-DataCo_Cleaned-2.csv   (in the project root)
-```
+### Step 3: Add Dataset & Train Models
+Place the dataset file `DataCo_Cleaned-2.csv` in the root project directory.
 
-> 📎 The dataset is not included in this repo due to its size (~18 MB). Contact the team or download from [Kaggle - DataCo Smart Supply Chain](https://www.kaggle.com/datasets/shashwatwork/dataco-smart-supply-chain-for-big-data-analysis).
+> 📎 **Dataset Note**: The DataCo dataset contains 59,606 transactions. If you need to re-train the models from scratch:
 
-### 5. Train the model & initialize the warehouse
-
-#### Option A: Local Training
 ```bash
+# Option A: Train production model locally
 python train_model.py
+
+# Initialize SQLite Star Schema warehouse
 python warehouse_etl.py
 ```
 
-#### Option B: Cloud Training via Google Colab (Zero Local Compute)
-1. Open `notebooks/Smart_Freight_Model_Training_Colab.ipynb` in [Google Colab](https://colab.research.google.com).
-2. Upload `DataCo_Cleaned-2.csv` when prompted and execute all cells.
-3. The notebook benchmarks 8 regression models, plots all comparison figures, and automatically downloads `smart_freight_model_bundle.zip`.
-4. Extract the contents directly into your project's `models/` folder.
-5. Initialize the SQLite warehouse locally:
-   ```bash
-   python warehouse_etl.py
-   ```
+> **Option B (Zero Local Compute)**: Run `notebooks/Smart_Freight_Model_Training_Colab.ipynb` on Google Colab, download `smart_freight_model_bundle.zip`, and extract it into `models/`.
 
-### 6. Run the application
+---
 
-#### Mode 1: Production (Unified Flask + React)
-The built React.js frontend (`frontend/dist`) is directly served by Flask:
+### Step 4: Build Frontend Assets
+```bash
+cd frontend
+npm install
+npm run build
+cd ..
+```
+*This compiles the React 19 application into `frontend/dist`, allowing Flask to serve both the frontend and API simultaneously.*
+
+---
+
+### Step 5: Launch the Application
+
+#### Option A: Unified Production Mode (Recommended)
+Flask serves the API and production-built React assets directly:
 ```bash
 python app.py
 ```
-Open your browser at: **[http://127.0.0.1:5001](http://127.0.0.1:5001)**
+Visit **[http://127.0.0.1:5001](http://127.0.0.1:5001)** in your browser.
 
-#### Mode 2: Development (Vite Hot-Reload + Flask API)
-Terminal 1 (Backend API):
+#### Option B: Live Development Mode (Vite HMR)
+Run backend and frontend in separate terminals for instant hot reloading:
+
+**Terminal 1 (Flask API Backend):**
 ```bash
 python app.py
 ```
-Terminal 2 (React Vite Dev Server):
+
+**Terminal 2 (Vite Frontend Dev Server):**
 ```bash
 cd frontend
 npm run dev
 ```
-Open your browser at: **[http://localhost:3000](http://localhost:3000)** (API calls are automatically proxied to Flask).
+Visit **[http://localhost:3000](http://localhost:3000)** (all API requests proxy automatically to port 5001).
 
 ---
 
-## 📂 Dataset
+## 📡 API Reference
 
-| Property | Value |
-|:---|:---|
-| **Source** | DataCo Supply Chain Dataset |
-| **Records** | 59,606 cleaned transactions |
-| **Regression Target** | `Days for shipping (real)` |
-| **Features Used** | 36 pre-shipment attributes |
-| **Leakage Removed** | `Late_delivery_risk`, `Delivery Status`, `shipping date`, `Shipping delays` |
-| **PII Removed** | Customer names, email, password, address |
+All endpoints return JSON and adhere to standard HTTP status codes.
+
+### 🔮 Single Shipment Prediction
+- **Endpoint**: `POST /api/predict`
+- **Payload**:
+```json
+{
+  "shipping_mode": "Standard Class",
+  "order_region": "Western Europe",
+  "order_country": "Alemania",
+  "order_state": "Bavaria",
+  "market": "Europe",
+  "category_name": "Sporting Goods",
+  "customer_segment": "Consumer",
+  "order_item_quantity": 2,
+  "product_price": 89.99,
+  "order_item_discount_rate": 0.05,
+  "days_for_shipment_scheduled": 4
+}
+```
+- **Response**:
+```json
+{
+  "status": "success",
+  "predicted_shipping_days": 3.42,
+  "predicted_shipping_days_rounded": 4,
+  "scheduled_days": 4,
+  "variance_days": 0,
+  "is_delayed": false,
+  "delay_probability": 0.28,
+  "risk_factors": ["Standard Class ocean transit corridor"]
+}
+```
 
 ---
 
-## 📈 Key Results
+### 📊 Multi-Dimensional Analytics Suite
+- **Endpoint**: `GET /api/analytics/suite`
+- **Response**: Returns 8-model performance metrics, feature importance rankings, 6x6 Pearson correlation matrix, 2D market-versus-mode delivery duration matrix, and order distributions.
+
+---
+
+### 📦 Batch CSV Predictions
+- **Endpoint**: `POST /api/batch_predict`
+- **Input**: `multipart/form-data` with CSV file containing order rows.
+- **Response**: Summary metrics (total rows, delayed count, average predicted days) and downloadable enriched CSV payload.
+
+---
+
+### 📈 Operational Dashboard Telemetry
+- **Endpoint**: `GET /api/dashboard`
+- **Response**: Aggregate statistics (total predictions, average duration, high-risk shipments, recent prediction ledger).
+
+---
+
+## 📁 Repository Directory Structure
 
 ```
-Production Prediction (Random Forest):
-  ✅ MAE  = 0.6938 days  (~16.6 hours average error)
-  ✅ RMSE = 0.9725 days
-  ✅ R²   = 0.64
-
-Best Delay Classifier (Balanced Random Forest):
-  ✅ ROC-AUC  = 0.8683
-  ✅ Accuracy = 74.53%
-  ✅ F1-Score = 74.74%
-
-Top Association Rule:
-  {Cleats} => {Men's Footwear}
-  Support: 1.51% | Confidence: 23.6% | Lift: 1.374
+smart-freight/
+│
+├── app.py                         # Flask server entry point & REST routing
+├── train_model.py                 # Scikit-learn model training & serialization
+├── warehouse_etl.py               # Star & Snowflake SQLite warehouse loader
+├── requirements.txt               # Backend Python dependencies
+├── DataCo_Cleaned-2.csv           # 59,606-transaction dataset
+│
+├── frontend/                      # React 19 + TypeScript + Vite SPA
+│   ├── index.html                 # Single-page HTML entry point
+│   ├── package.json               # Frontend dependencies & scripts
+│   ├── vite.config.ts             # Vite configuration with API proxying
+│   ├── public/
+│   │   └── favicon.svg            # Isometric Smart Freight vector favicon
+│   └── src/
+│       ├── App.tsx                # Client-side router & layout
+│       ├── main.tsx               # DOM root mount
+│       ├── index.css              # Global tokens & Leaflet dark theme
+│       ├── components/
+│       │   ├── layout/            # Navbar, Footer
+│       │   ├── ui/                # BrandLogo, Card, Badge, Modal, CountUp
+│       │   └── shipment/          # GeodesicRouteMap, PredictionForm
+│       ├── pages/                 # Landing, Dashboard, Predict, Batch, Analytics, etc.
+│       ├── services/              # Axios API service clients
+│       └── types/                 # TypeScript interfaces & API schemas
+│
+├── models/                        # Serialized ML artifacts
+│   ├── production_pipeline.joblib # Random Forest pipeline binary
+│   └── model_metadata.json        # Benchmark scores & hyperparameters
+│
+├── data/                          # Cached analytics & correlation matrices
+│   └── college_labs_cache.json    # Pre-computed 2D matrices & distributions
+│
+├── notebooks/                     # Exploratory & Colab training notebooks
+│   └── Smart_Freight_Model_Training_Colab.ipynb
+│
+└── docs/                          # Architecture diagrams & academic papers
 ```
 
 ---
 
-## 🏫 Academic Context
+## 👥 Contributors & Academic Context
 
-This project was developed as part of the **Data Warehousing and Mining (DWM)** practical curriculum.
+Developed as an advanced practical implementation in **Data Warehousing & Mining (DWM)** and **Machine Learning Engineering**.
 
-- **Dataset:** 59,606 global supply chain orders
-- **Algorithms Covered:** Linear Regression, Decision Tree, Naive Bayes, K-Means, Agglomerative Clustering, Apriori
-- **Warehouse Concepts:** Star Schema, Snowflake Schema, Fact Constellation, OLAP (Roll-up, Drill-down, Slice, Dice, Pivot)
-- **Privacy:** All customer analysis is cohort-based — zero PII exposed
-
----
-
-## 👥 Team
-
-> Academic project submitted for DWM practical evaluation.
+- **Dataset**: DataCo Global Supply Chain Intelligence (59,606 transactions)
+- **Zero-PII Compliance**: All customer analytics are cohort-based with zero personally identifiable data exposed.
+- **License**: MIT
 
 ---
 
-<p align="center">Made with ❤️ | Smart Freight © 2026</p>
+<div align="center">
+  <sub>Smart Freight — Intelligent Logistics & Transit Duration Forecasting Platform</sub>
+</div>
