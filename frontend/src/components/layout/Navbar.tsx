@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { Button } from '../ui/Button';
+import { BrandLogo } from '../ui/BrandLogo';
 import {
   Boxes,
   Compass,
@@ -32,16 +33,8 @@ export const Navbar: React.FC = () => {
     <header className="sticky top-0 z-40 w-full bg-[#08090a]/90 backdrop-blur-md border-b border-[#23252a]">
       <div className="max-w-[1240px] mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
         {/* Brand Logo */}
-        <Link to="/" className="flex items-center gap-2.5 group cursor-pointer">
-          <div className="w-6 h-6 rounded-[6px] bg-[#0f1011] border border-[#383b3f] flex items-center justify-center text-[#ffffff] font-mono text-[11px] font-bold group-hover:border-[#e4f222] transition-colors">
-            SF
-          </div>
-          <span className="text-[14px] font-[510] text-[#ffffff] tracking-tight">
-            Smart<span className="text-[#8a8f98] font-normal">Freight</span>
-          </span>
-          <span className="hidden sm:inline-block text-[10px] font-mono px-1.5 py-0.5 rounded-[4px] bg-[#161718] border border-[#23252a] text-[#8a8f98]">
-            v2.1
-          </span>
+        <Link to="/" className="group cursor-pointer">
+          <BrandLogo size="md" showText={true} />
         </Link>
 
         {/* Desktop Navigation Links */}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { analyticsService } from '../../services/analyticsService';
+import { BrandLogo } from '../ui/BrandLogo';
 import { ShieldCheck, Database, Cpu } from 'lucide-react';
 
 export const Footer: React.FC = () => {
@@ -20,7 +21,7 @@ export const Footer: React.FC = () => {
     <footer className="w-full border-t border-[#23252a] bg-[#08090a] py-8 mt-20">
       <div className="max-w-[1240px] mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-[12px] text-[#62666d]">
         <div className="flex items-center gap-3">
-          <span className="font-mono text-[#8a8f98]">Smart Freight Intelligence</span>
+          <BrandLogo size="sm" showText={true} />
           <span>•</span>
           <span className="flex items-center gap-1.5">
             <span
