@@ -1,7 +1,13 @@
 import { api } from './api';
-import type { DashboardData, PredictionHistoryItem } from '../types';
+import type { DashboardData, PredictionHistoryItem, AnalyticsSuiteData } from '../types';
 
 export const analyticsService = {
+  // Fetch unified multi-dimensional analytics suite
+  async getAnalyticsSuite(): Promise<AnalyticsSuiteData> {
+    const response = await api.get<AnalyticsSuiteData>('/api/analytics/suite');
+    return response.data;
+  },
+
   // Fetch real aggregated prediction KPIs, recent history, and model metadata
   async getDashboardData(): Promise<DashboardData> {
     const response = await api.get<DashboardData>('/api/dashboard');

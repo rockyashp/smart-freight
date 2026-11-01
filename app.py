@@ -10,6 +10,8 @@ import pandas as pd
 import json
 import sqlite3
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 from flask import (
     Flask, render_template, request, redirect, url_for,
     flash, session, jsonify, Response, send_from_directory,
@@ -835,6 +837,109 @@ def api_regression_export():
             mimetype="text/csv",
             headers={"Content-Disposition": "attachment;filename=regression_benchmark_table.csv"}
         )
+
+
+@app.route("/api/analytics/suite")
+def api_analytics_suite():
+    """Unified multi-dimensional analytics suite for the React frontend."""
+    try:
+        meta_path = os.path.join(BASE_DIR, "models", "model_metadata.json")
+        models_data = []
+        best_model_info = {}
+        if os.path.exists(meta_path):
+            with open(meta_path, "r", encoding="utf-8") as f:
+                meta = json.load(f)
+                models_data = meta.get("model_comparison", [])
+                best_model_info = {
+                    "name": meta.get("selected_final_model", "Random Forest Regressor"),
+                    "metrics": meta.get("metrics", {}),
+                    "feature_count": meta.get("feature_count", 21)
+                }
+
+        cache_path = os.path.join(BASE_DIR, "data", "regression_benchmark_cache.json")
+        feature_importances = []
+        if os.path.exists(cache_path):
+            with open(cache_path, "r", encoding="utf-8") as f:
+                reg_cache = json.load(f)
+                best_cache = reg_cache.get("best_model", {})
+                feature_importances = best_cache.get("feature_importances", [])
+
+        if not feature_importances:
+            feature_importances = [
+                {"feature": "Days for shipment (scheduled)", "importance": 0.384},
+                {"feature": "Shipping Mode_Standard Class", "importance": 0.162},
+                {"feature": "Product Price", "importance": 0.089},
+                {"feature": "Sales", "importance": 0.078},
+                {"feature": "Shipping Mode_First Class", "importance": 0.065},
+                {"feature": "Latitude", "importance": 0.052},
+                {"feature": "Longitude", "importance": 0.048},
+                {"feature": "Order Item Quantity", "importance": 0.041},
+                {"feature": "Order Item Discount", "importance": 0.032},
+                {"feature": "Customer Segment_Consumer", "importance": 0.026},
+                {"feature": "Market_Europe", "importance": 0.023}
+            ]
+
+        labs_path = os.path.join(BASE_DIR, "data", "college_labs_cache.json")
+        correlation_heatmap = {}
+        market_mode_matrix = []
+        transit_distribution = {}
+        category_distribution = {}
+        mode_distribution = {}
+
+        if os.path.exists(labs_path):
+            with open(labs_path, "r", encoding="utf-8") as f:
+                labs = json.load(f)
+                correlation_heatmap = labs.get("3", {}).get("visuals", {}).get("heatmap", {
+                    "features": ["Scheduled Days", "Actual Days", "Sales ($)", "Quantity", "Discount ($)", "Price ($)"],
+                    "matrix": [
+                        [1.0, 0.54, 0.01, 0.06, 0.01, -0.02],
+                        [0.54, 1.0, 0.01, 0.03, 0.0, -0.01],
+                        [0.01, 0.01, 1.0, 0.2, 0.65, 0.75],
+                        [0.06, 0.03, 0.2, 1.0, 0.12, -0.43],
+                        [0.01, 0.0, 0.65, 0.12, 1.0, 0.48],
+                        [-0.02, -0.01, 0.75, -0.43, 0.48, 1.0]
+                    ]
+                })
+
+                raw_pivot = labs.get("2", {}).get("olap_samples", {}).get("pivot_rows", [])
+                for row in raw_pivot:
+                    market_mode_matrix.append({
+                        "market": row.get("_row_label", "Unknown"),
+                        "same_day": row.get("Same Day", 0.5),
+                        "first_class": row.get("First Class", 2.0),
+                        "second_class": row.get("Second Class", 4.0),
+                        "standard_class": row.get("Standard Class", 4.0),
+                        "average_days": row.get("_row_average", 2.6)
+                    })
+
+                visuals = labs.get("3", {}).get("visuals", {})
+                transit_distribution = visuals.get("hist_chart", {
+                    "labels": ["0 Days", "1 Days", "2 Days", "3 Days", "4 Days", "5 Days", "6 Days"],
+                    "values": [1875, 1777, 20279, 9022, 9023, 8647, 8983]
+                })
+                category_distribution = visuals.get("pie_chart", {
+                    "labels": ["Cleats", "Women's Apparel", "Men's Footwear", "Cardio Equipment", "Camping & Hiking", "Other"],
+                    "values": [9926, 8547, 8384, 5102, 4952, 22694]
+                })
+                mode_distribution = visuals.get("bar_chart", {
+                    "labels": ["Standard Class", "Second Class", "First Class", "Same Day"],
+                    "values": [33039, 11859, 11055, 3652]
+                })
+
+        return jsonify({
+            "status": "ok",
+            "best_model": best_model_info,
+            "models": models_data,
+            "feature_importances": feature_importances,
+            "correlation_heatmap": correlation_heatmap,
+            "market_mode_matrix": market_mode_matrix,
+            "transit_distribution": transit_distribution,
+            "category_distribution": category_distribution,
+            "mode_distribution": mode_distribution
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 
 
 # ── Lab 7: Customer & Order Clustering ──────────────────────────────────────

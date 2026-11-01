@@ -113,6 +113,62 @@ export interface ModelMetadata {
   evaluated_at?: string;
 }
 
+export interface AnalyticsModel {
+  name: string;
+  rmse: number;
+  mae: number;
+  mse: number;
+  r2: number;
+  train_time_sec: number;
+  rank: number;
+  model_type?: string;
+}
+
+export interface CorrelationHeatmapData {
+  features: string[];
+  matrix: number[][];
+}
+
+export interface MarketModeMatrixRow {
+  market: string;
+  same_day: number;
+  first_class: number;
+  second_class: number;
+  standard_class: number;
+  average_days: number;
+}
+
+export interface AnalyticsSuiteData {
+  status: string;
+  best_model: {
+    name: string;
+    metrics: {
+      mae: number;
+      mse: number;
+      rmse: number;
+      r2: number;
+      train_time_sec?: number;
+    };
+    feature_count: number;
+  };
+  models: AnalyticsModel[];
+  feature_importances: { feature: string; importance: number }[];
+  correlation_heatmap: CorrelationHeatmapData;
+  market_mode_matrix: MarketModeMatrixRow[];
+  transit_distribution: {
+    labels: string[];
+    values: number[];
+  };
+  category_distribution: {
+    labels: string[];
+    values: number[];
+  };
+  mode_distribution: {
+    labels: string[];
+    values: number[];
+  };
+}
+
 export interface DashboardData {
   kpis: PredictionKPIs;
   history: PredictionHistoryItem[];
